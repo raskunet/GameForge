@@ -7,6 +7,7 @@
 - [PostgreSQL](https://www.postgresql.org/)
 - [git](https://git-scm.com)
 
+Knowledge of git is required for contributing to project
 ##### Optional
 - [Github Client](https://desktop.github.com/download/)
 
@@ -24,13 +25,25 @@ cd GameForge
 ```ps
 dotnet restore
 ```
+## Contributing
+1. Make a branch with your username
+```bash
+git checkout -b your-username
+```
+2. Make the necessary changes onto your local branch
+3. Push your changes to your branch
+```bash
+git push -u origin your-username
+```
+4.
+
 
 ### Project Structure
 The project structure should look like this (TODO)
 
 ## How to run the project
-To run the project you can either use the cli or vscode/vs run command
-1. For cli
+To run the project you can either use the cli or vscode/vs `run `
+- For cli
 ```bash
 dotnet build
 dotnet run
