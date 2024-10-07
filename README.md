@@ -42,8 +42,8 @@ git push -u origin your-username
 The project structure should look like this (TODO)
 
 ## How to run the project
-To run the project you can either use the cli or vscode/vs `run `
-- For cli
+To run the project you can either use the cli or vscode/vs run command
+1. For cli
 ```bash
 dotnet build
 dotnet run
