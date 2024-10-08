@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using GameForge.Data;
 namespace GameForge
 {
     internal class Program
@@ -8,6 +11,8 @@ namespace GameForge
             var dotenv = Path.Combine(root, ".env");
             DotEnv.Load(dotenv);
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<UserContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("UserContext") ?? throw new InvalidOperationException("Connection string 'UserContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
