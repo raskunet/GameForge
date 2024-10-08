@@ -12,10 +12,11 @@ Knowledge of git is required for contributing to project
 - [Github Client](https://desktop.github.com/download/)
 
 ## Steps
-
+- ### Run Project
+1. Make a fork of this project on your github account
 1. Clone the repo by running the following command in your terminal
 ```bash
-git clone https://github.com/raskunet/GameForge.git
+git clone https://github.com/your-username/GameForge.git
 ```
 2. Cd into the project directory
 ```bash
@@ -25,19 +26,18 @@ cd GameForge
 ```ps
 dotnet restore
 ```
-## Contributing
+- ### Contributing
 1. Make a branch with your username
 ```bash
-git checkout -b your-username
+git checkout -B your-username
 ```
 2. Make the necessary changes onto your local branch
 3. Push your changes to your branch
 ```bash
 git push -u origin your-username
 ```
-4.
-
-
+4. Make a Pull request on github
+5. Wait for the reviewers to accept your pull request and merge your changes with main branch
 ### Project Structure
 The project structure should look like this (TODO)
 
@@ -48,7 +48,8 @@ To run the project you can either use the cli or vscode/vs run command
 dotnet build
 dotnet run
 ```
-
+## Further Reading
+- [Fork and Pull request Model](https://docs.github.com/en/pull-requests)
 ### Contributors
 
 | Full name  | Email address | GitHub |
