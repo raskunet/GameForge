@@ -14,9 +14,9 @@ namespace GameForge.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly GameForgeContext _context;
 
-        public UserController(UserContext context)
+        public UserController(GameForgeContext context)
         {
             _context = context;
         }

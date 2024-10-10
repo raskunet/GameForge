@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using GameForge.Data;
+using GameForge.Models;
 namespace GameForge
 {
     internal class Program
@@ -9,16 +10,24 @@ namespace GameForge
         {
             var root = Directory.GetCurrentDirectory();
             var dotenv = Path.Combine(root, ".env");
-            DotEnv.Load(dotenv);
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<UserContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("UserContext") ?? throw new InvalidOperationException("Connection string 'UserContext' not found.")));
+            DotEnv.PGSQLConnStringLoad(dotenv,"POSTGRES");
 
+
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<GameForgeContext>(options =>
+                options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES")));
+            
+            
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
 
+                SeedDataUser.Initialize(services);
+            }
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

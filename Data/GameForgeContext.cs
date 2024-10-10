@@ -7,9 +7,9 @@ using GameForge.Models;
 
 namespace GameForge.Data
 {
-    public class UserContext : DbContext
+    public class GameForgeContext : DbContext
     {
-        public UserContext (DbContextOptions<UserContext> options)
+        public GameForgeContext (DbContextOptions<GameForgeContext> options)
             : base(options)
         {
         }

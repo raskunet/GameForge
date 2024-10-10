@@ -5,7 +5,7 @@ namespace GameForge
 
     public static class DotEnv
     {
-        public static void Load(string filePath)
+        public static void PGSQLConnStringLoad(string filePath,string connURIName)
         {
             if (!File.Exists(filePath))
             {
@@ -14,18 +14,23 @@ namespace GameForge
                 Console.BackgroundColor = ConsoleColor.Black;
                 return;
             }
-
+            if(string.IsNullOrEmpty(connURIName)){
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("connURIName can't be empty");
+                Console.BackgroundColor = ConsoleColor.Black;
+                return;
+            }else if(!connURIName.ToCharArray().All(c=> char.IsLetterOrDigit(c))){
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("ConnURIName can only contain letter, Digits or both");
+                Console.BackgroundColor = ConsoleColor.Black;
+                return;
+            }
+            string connURI = "";
             foreach (var line in File.ReadAllLines(filePath))
             {
-                var parts = line.Split(
-                    '=',
-                    StringSplitOptions.RemoveEmptyEntries);
-
-                if (parts.Length != 2)
-                    continue;
-
-                Environment.SetEnvironmentVariable(parts[0], parts[1]);
+                connURI += line + "; ";
             }
+            Environment.SetEnvironmentVariable(connURIName, connURI);
         }
     }
 }
