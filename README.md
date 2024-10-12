@@ -11,8 +11,10 @@ Knowledge of git is required for contributing to project
 ##### Optional
 - [Github Client](https://desktop.github.com/download/)
 
+---
+
 ## Steps
-- ### Run Project
+- ### Getting started
 1. Make a fork of this project on your github account
 1. Clone the repo by running the following command in your terminal
 ```bash
@@ -38,9 +40,11 @@ git push -u origin your-username
 ```
 4. Make a Pull request on github
 5. Wait for the reviewers to accept your pull request and merge your changes with main branch
+---
 ### Project Structure
 The project structure should look like this (TODO)
 
+---
 ## How to run the project
 To run the project you can either use the cli or vscode/vs run command
 1. For cli
@@ -48,10 +52,11 @@ To run the project you can either use the cli or vscode/vs run command
 dotnet build
 dotnet run
 ```
+---
 ## Further Reading
-- [Fork and Pull request Model](https://docs.github.com/en/pull-requests)
+- [Fork and Pull request Model](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/getting-started/about-collaborative-development-models#fork-and-pull-model)
 ### Contributors
 
 | Full name  | Email address | GitHub |
 | ------------- | ------------- | ------------- |
-| **Shaheer Rashad**  | <raskunet@proton.me>  | [@raskunet](https://github.com/raskunet) |
+| **Shaheer Rashad**  | [raskunet@proton.me](mailto:epolamik@proton.me)  | [@raskunet](https://github.com/raskunet) |
