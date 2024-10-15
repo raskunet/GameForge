@@ -12,7 +12,7 @@ namespace GameForge
             var dotenv = Path.Combine(root, ".env");
             DotEnv.PGSQLConnStringLoad(dotenv,"POSTGRES");
 
-
+            Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRES"));
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<GameForgeContext>(options =>
                 options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES")));
