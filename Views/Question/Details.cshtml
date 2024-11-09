@@ -1,17 +1,10 @@
-@model GameForge.Models.Question
+@* @model GameForge.Models.Question
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Details";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
+<h1>Details</h1>
 
 <div>
     <h4>Question</h4>
@@ -76,6 +69,144 @@
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Back to List</a>
+</div> *@
+
+@model GameForge.Models.Question
+
+@{
+    ViewData["Title"] = "Question Details";
+}
+
+<h1>@Model.Title</h1>
+<hr />
+
+<!-- Question Details Section -->
+<div class="d-flex">
+    <!-- Upvote/Downvote Section -->
+    <div class="text-center me-3">
+        <button class="btn p-0" title="Upvote" onclick="QuestionVote(@Model.QuestionID,true)">
+            <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-success">
+                <polygon points="12,0 24,24 0,24"/>
+            </svg>
+        </button>
+        <div class="fw-bold id="questionVoteCount">@(Model.Upvotes-Model.Downvotes)</div>
+        <button class="btn p-0" title="Downvote" onclick="QuestionVote(@Model.QuestionID,false)">
+            <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-danger" style="transform: rotate(180deg);">
+                <polygon points="12,0 24,24 0,24"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Question Text Section -->
+    <div class="flex-grow-1">
+        <p class="fs-5">@Model.QuestionText</p>
+    </div>
 </div>
-</body>
-</html>
+
+<!-- User and Date Information -->
+<div class="text-end text-muted mt-2">
+    <small>Posted by @Model.User.Username on @Model.CreationDate.ToString("MMM dd, yyyy")</small>
+</div>
+
+<hr />
+
+<!-- Answers Section -->
+<div class="mt-5">
+    <h4>Answers</h4>
+    @if (Model.Answers != null && Model.Answers.Any())
+    {
+        <hr />
+        <div class="list-group">
+            @foreach (var answer in Model.Answers)
+            {
+                <div class="list-group-item mb-2 p-3">
+                    <p>@Html.DisplayFor(_ => answer.AnswerText)</p>
+                    <div class="d-flex justify-content-between mt-3">
+                        <small class="text-muted">Answered by @answer.User.Username on @answer.CreationDate.ToString("MMM dd, yyyy")</small>
+                        <span>
+                            <span class="badge bg-success me-2">Upvotes: @answer.Upvotes</span>
+                            <span class="badge bg-danger">Downvotes: @answer.Downvotes</span>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No answers yet. Be the first to answer!</p>
+    }
+</div>
+
+<!-- Link to Create Answer Page -->
+<div class="mt-5">
+    @Html.ActionLink("Write An Answer","Create","Answer", new {Model.QuestionID}, new {@class="btn btn-secondary"})
+</div>
+
+<!-- Navigation Links -->
+<div class="mt-4">
+    @Html.ActionLink("Edit", "Edit", new { id = Model.QuestionID }, new { @class = "btn btn-secondary" }) |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Styles {
+    <style>
+        /* Style for upvote and downvote buttons */
+        .bi-triangle-fill {
+            cursor: pointer;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    </style>
+}
+
+@section Scripts{
+    <script>
+        function QuestionVote(QuestionID, type) {
+            const url = "/Question/QuestionVote"
+
+            let requestObj = {
+                "QuestionID": QuestionID,
+                "Type":type
+            }
+
+            @* fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(requestObj)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`questionVoteCount`)
+                            .innerText = `${data.upvotes} - ${data.downvotes}`;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error)); *@
+            $.ajax({
+                   url: url,
+                   type: 'POST',
+                   contentType: 'application/json',
+                   data: JSON.stringify(requestObj),
+                   success: function(data) {
+                       if (data.success) {
+                           const voteCountElement = `#questionVoteCount` ;
+                           $(voteCountElement).text(`${data.upvotes} - ${data.downvotes}`);
+                       } else {
+                           alert(data.message); // Display message if user already voted
+                       }
+                   },
+                   error: function(error) {
+                       console.error("Error:", error);
+                   }
+               });
+        }
+
+    </script>
+}
+

@@ -1,17 +1,10 @@
-@model GameForge.Models.Question
+@* @model GameForge.Models.QuestionCreateViewModel
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Create";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
-</head>
-<body>
+<h1>Create</h1>
 
 <h4>Question</h4>
 <hr />
@@ -20,53 +13,15 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="QuestionID" class="control-label"></label>
-                <input asp-for="QuestionID" class="form-control" />
-                <span asp-validation-for="QuestionID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AuthorID" class="control-label"></label>
-                <select asp-for="AuthorID" class ="form-control" asp-items="ViewBag.AuthorID"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control"/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="QuestionText" class="control-label"></label>
-                <input asp-for="QuestionText" class="form-control" />
+                <!-- <input asp-for="QuestionText" class="form-control"/> -->
+                <textarea asp-for="QuestionText" class="form-control" rows="10" cols="50"></textarea>
                 <span asp-validation-for="QuestionText" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Upvotes" class="control-label"></label>
-                <input asp-for="Upvotes" class="form-control" />
-                <span asp-validation-for="Upvotes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Downvotes" class="control-label"></label>
-                <input asp-for="Downvotes" class="form-control" />
-                <span asp-validation-for="Downvotes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestAnswerID" class="control-label"></label>
-                <input asp-for="LatestAnswerID" class="form-control" />
-                <span asp-validation-for="LatestAnswerID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestAnswerTime" class="control-label"></label>
-                <input asp-for="LatestAnswerTime" class="form-control" />
-                <span asp-validation-for="LatestAnswerTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumberOfAnswers" class="control-label"></label>
-                <input asp-for="NumberOfAnswers" class="form-control" />
-                <span asp-validation-for="NumberOfAnswers" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -81,6 +36,65 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@
+
+@model GameForge.Models.QuestionCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Question";
 }
-</body>
-</html>
+
+<h1>Create a New Question</h1>
+<hr />
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Ask a Question</h4>
+
+                <form asp-action="Create">
+                    <!-- Title Input with Tooltip -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter a concise title for your question"/>
+                    </div>
+
+                    <!-- Question Textarea with Character Counter -->
+                    <div class="form-group mb-3">
+                        <label asp-for="QuestionText" class="control-label"></label>
+                        <textarea asp-for="QuestionText" class="form-control" rows="10" cols="50" id="questionText"></textarea>
+                        <small class="text-muted" id="charCount">0/500 characters</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group mt-4">
+                        <input type="submit" value="Create" class="btn btn-primary w-100" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Scripts {
+    <!-- Tooltip Initialization -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+
+        // Character Counter for QuestionText
+        document.getElementById("questionText").addEventListener("input", function () {
+            var textLength = this.value.length;
+            document.getElementById("charCount").textContent = `${textLength}/500 characters`;
+        });
+    </script>
+}
