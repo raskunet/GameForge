@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameForge.Models;
 
-[PrimaryKey("ThreadTopicID","UserID")]
+[PrimaryKey("ThreadTopicID")]
 public class ThreadTopic
 {
-    [HiddenInput(DisplayValue = false)]
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ThreadTopicID { get; set; }
 
     [HiddenInput(DisplayValue = false)]
@@ -34,6 +35,7 @@ public class ThreadTopicReply
     public int UserID { get; set; }
     public DateTime CreationDate { get; set; }
     public required ThreadTopic ThreadTopic { get; set; }
+    public required User User{ get; set; }
 }
 
 [NotMapped]
