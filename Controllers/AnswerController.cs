@@ -46,12 +46,14 @@ namespace GameForge.Controllers
             return View(answer);
         }
 
-        // GET: Answer/Create
-        public IActionResult Create()
+        // GET: Answer/Create/QuestionID
+        [HttpGet]
+        public IActionResult Create(int QuestionID)
         {
-            ViewData["UserID"] = new SelectList(_context.Question, "QuestionID", "QuestionID");
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID");
-            return View();
+            //ViewData["QuestionID"] = QuestionID;
+            Console.WriteLine(QuestionID);
+            var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID };
+            return View(AnswerCreate);
         }
 
         // POST: Answer/Create
@@ -59,17 +61,22 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuestionID,UserID,AnswerText,Upvotes,Downvotes,CreationDate")] Answer answer)
+        public async Task<IActionResult> Create([Bind("QuestionID", "AnswerText")] AnswerCreateViewModel answerDat)
         {
             if (ModelState.IsValid)
             {
+                var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                if (question == null || user == null)
+                {
+                    return NotFound();
+                }
+                var answer = new Answer { Question = question, User = user, CreationDate = DateTime.UtcNow, Upvotes = 0, Downvotes = 0, AnswerText = answerDat.AnswerText };
                 _context.Add(answer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.Question, "QuestionID", "QuestionID", answer.UserID);
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID", answer.UserID);
-            return View(answer);
+            return View(answerDat);
         }
 
         // GET: Answer/Edit/5
