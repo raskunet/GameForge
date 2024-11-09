@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameForge.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    partial class GameForgeContextModelSnapshot : ModelSnapshot
+    [Migration("20241109004414_New_Primary_KEY_2")]
+    partial class New_Primary_KEY_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,9 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("AuthorID")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -46,27 +52,11 @@ namespace GameForge.Migrations
 
                     b.HasKey("QuestionID", "UserID");
 
+                    b.HasIndex("AuthorID");
+
                     b.HasIndex("UserID");
 
                     b.ToTable("Answer");
-                });
-
-            modelBuilder.Entity("GameForge.Models.AnswerVote", b =>
-                {
-                    b.Property<int>("QuestionID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsUpvote")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("QuestionID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("AnswerVotes");
                 });
 
             modelBuilder.Entity("GameForge.Models.Question", b =>
@@ -113,24 +103,6 @@ namespace GameForge.Migrations
                     b.ToTable("Question");
                 });
 
-            modelBuilder.Entity("GameForge.Models.QuestionVote", b =>
-                {
-                    b.Property<int>("QuestionID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsUpvote")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("QuestionID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("QuestionVotes");
-                });
-
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
                 {
                     b.Property<int>("ThreadTopicID")
@@ -175,10 +147,13 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
+                    b.Property<int>("ThreadTopicID")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ThreadTopicID")
+                    b.Property<int>("AuthorID")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationDate")
@@ -188,9 +163,11 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("UserID", "ThreadTopicID");
+                    b.HasKey("ThreadTopicID", "UserID");
 
-                    b.HasIndex("ThreadTopicID");
+                    b.HasIndex("AuthorID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("ThreadTopicReplies");
                 });
@@ -227,31 +204,12 @@ namespace GameForge.Migrations
                 {
                     b.HasOne("GameForge.Models.Question", "Question")
                         .WithMany("Answers")
-                        .HasForeignKey("QuestionID")
+                        .HasForeignKey("AuthorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameForge.Models.User", "User")
                         .WithMany("Answers")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GameForge.Models.AnswerVote", b =>
-                {
-                    b.HasOne("GameForge.Models.Question", "Question")
-                        .WithMany("AnswerVotes")
-                        .HasForeignKey("QuestionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GameForge.Models.User", "User")
-                        .WithMany("AnswerVotes")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -272,25 +230,6 @@ namespace GameForge.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GameForge.Models.QuestionVote", b =>
-                {
-                    b.HasOne("GameForge.Models.Question", "Question")
-                        .WithMany("QuestionVotes")
-                        .HasForeignKey("QuestionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GameForge.Models.User", "User")
-                        .WithMany("QuestionVotes")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
                 {
                     b.HasOne("GameForge.Models.User", "User")
@@ -306,7 +245,7 @@ namespace GameForge.Migrations
                 {
                     b.HasOne("GameForge.Models.ThreadTopic", "ThreadTopic")
                         .WithMany("ThreadTopidcReplies")
-                        .HasForeignKey("ThreadTopicID")
+                        .HasForeignKey("AuthorID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -323,11 +262,7 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.Question", b =>
                 {
-                    b.Navigation("AnswerVotes");
-
                     b.Navigation("Answers");
-
-                    b.Navigation("QuestionVotes");
                 });
 
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
@@ -337,11 +272,7 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.User", b =>
                 {
-                    b.Navigation("AnswerVotes");
-
                     b.Navigation("Answers");
-
-                    b.Navigation("QuestionVotes");
 
                     b.Navigation("Questions");
 
