@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
 using Microsoft.AspNetCore.Components;
+using NuGet.Versioning;
 
 namespace GameForge.Controllers
 {
@@ -30,17 +31,24 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
-
+            var userID = 1;
+            var answerFlag = false;
             var question = await _context.Question
                 .Include(q => q.User)
-                .Include(q=>q.Answers)
+                .Include(q => q.Answers)
                 .FirstOrDefaultAsync(m => m.QuestionID == id);
             if (question == null)
             {
                 return NotFound();
             }
+            var answer = await _context.Answer.FirstOrDefaultAsync(m => m.UserID == userID && m.QuestionID == id);
+            if (answer != null)
+            {
+                answerFlag = true;
+            }
+            var questionPost = new QuestionPost { Question = question, AnswerFlag = answerFlag };
 
-            return View(question);
+            return View(questionPost);
         }
 
         // GET: Question/Create
@@ -76,44 +84,42 @@ namespace GameForge.Controllers
         }
 
         // GET: Question/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var question = await _context.Question.FindAsync(id);
             if (question == null)
             {
                 return NotFound();
             }
-            ViewData["AuthorID"] = new SelectList(_context.User, "ID", "ID", question.AuthorID);
-            return View(question);
+            var questionEditViewModel = new QuestionEditViewModel { QuestionID = question.QuestionID, QuestionText = question.QuestionText, Title = question.Title };
+            return View(questionEditViewModel);
         }
 
         // POST: Question/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuestionID,AuthorID,Title,CreationDate,QuestionText,Upvotes,Downvotes,LatestAnswerID,LatestAnswerTime,NumberOfAnswers")] Question question)
+        public async Task<IActionResult> Edit([Bind("QuestionID,Title,QuestionText")] QuestionEditViewModel questionEditViewModel)
         {
-            if (id != question.QuestionID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var userID = 1;
+                    var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionEditViewModel.QuestionID && m.User.ID == userID);
+                    if (question == null)
+                    {
+                        return NotFound();
+                    }
+                    question.Title = questionEditViewModel.Title;
+                    question.QuestionText = questionEditViewModel.QuestionText;
                     _context.Update(question);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuestionExists(question.QuestionID))
+                    if (!QuestionExists(questionEditViewModel.QuestionID))
                     {
                         return NotFound();
                     }
@@ -122,10 +128,9 @@ namespace GameForge.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = questionEditViewModel.QuestionID });
             }
-            ViewData["AuthorID"] = new SelectList(_context.User, "ID", "ID", question.AuthorID);
-            return View(question);
+            return View(questionEditViewModel);
         }
 
         // GET: Question/Delete/5
@@ -201,7 +206,7 @@ namespace GameForge.Controllers
                 if (questionVoteAction.Type == true && existingVote.IsUpvote == false)
                 {
                     question.Upvotes += 1;
-                    question.Downvotes = question.Downvotes==0 ? 0 : (question.Downvotes - 1);
+                    question.Downvotes = question.Downvotes == 0 ? 0 : (question.Downvotes - 1);
                 }
                 else if (questionVoteAction.Type == false && existingVote.IsUpvote == true)
                 {

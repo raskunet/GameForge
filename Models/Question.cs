@@ -31,7 +31,8 @@ public class Question
 public class QuestionPost
 {
     public required Question Question { get; set; }
-    public List<Answer> Answers { get; } = new List<Answer>();
+    public required bool AnswerFlag{ get; set; } 
+    //public List<Answer> Answers { get; } = new List<Answer>();
 }
 
 
@@ -46,6 +47,7 @@ public class QuestionCreateViewModel
 [NotMapped]
 public class QuestionEditViewModel
 {
+    public required int QuestionID{ get; set; }
     public string Title { get; set; } = string.Empty;
     public string QuestionText { get; set; } = null!;
 }
