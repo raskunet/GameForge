@@ -46,11 +46,16 @@ The project structure should look like this (TODO)
 
 ---
 ## How to run the project
-To run the project you can either use the cli or vscode/vs run command
-1. For cli
+1. To run the project you can either use the cli or vscode/vs run command. Before that make sure you have Postgres Installed locally. 
+2. Make a `.env` file in Project root and add connection string paramaters. You can look at the `.env.example` for reference
 ```bash
-dotnet build
-dotnet run
+    dotnet ef database update
+    dotnet build
+    dotnet run
+```
+3. For hot-reloading
+```bash
+    dotnet watch
 ```
 ---
 ## Further Reading
