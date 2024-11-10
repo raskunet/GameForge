@@ -1,49 +1,66 @@
-@model GameForge.Models.Answer
+@model GameForge.Models.AnswerEditViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Question";
 }
 
-<h1>Edit</h1>
+<h1 class="text-center text-primary mb-4">@ViewData["Title"]</h1>
 
-<h4>Answer</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="QuestionID" />
-            <input type="hidden" asp-for="UserID" />
-            <div class="form-group">
-                <label asp-for="AnswerText" class="control-label"></label>
-                <input asp-for="AnswerText" class="form-control" />
-                <span asp-validation-for="AnswerText" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Upvotes" class="control-label"></label>
-                <input asp-for="Upvotes" class="form-control" />
-                <span asp-validation-for="Upvotes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Downvotes" class="control-label"></label>
-                <input asp-for="Downvotes" class="form-control" />
-                <span asp-validation-for="Downvotes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Your Question</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="QuestionID" />
+                <input type="hidden" asp-for="UserID"/>
+                <!-- Question Text Field -->
+                <div class="form-group mb-4">
+                    <label asp-for="AnswerText" class="form-label fs-5 fw-semibold text-secondary">Answer Details:</label>
+                    <textarea asp-for="AnswerText" class="form-control border-primary" rows="8"
+                        placeholder="Provide more details for your question here"
+                        style="resize: vertical; font-size: 1.1rem;"></textarea>
+                    <span asp-validation-for="AnswerText" class="text-danger mt-1"></span>
+                </div>
+
+                <!-- Save Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg btn-primary px-5">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to Question List Link -->
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Question List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Styles {
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin: 0 auto;
+            max-width: 700px;
+            border-radius: 10px;
+        }
+
+        .form-control {
+            box-shadow: none;
+            border-width: 2px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+    </style>
+}
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

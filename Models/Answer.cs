@@ -1,7 +1,4 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,4 +24,21 @@ public class AnswerCreateViewModel
     public string AnswerText { get; set; } = null!;
     [HiddenInput(DisplayValue =false)]
     public int QuestionID{ get; set; }
+}
+
+[NotMapped]
+public class AnswerVoteAction
+{
+    public int QuestionID { get; set; }
+    public int UserID{ get; set; }
+    public bool Type{ get; set; }
+}
+
+[NotMapped]
+public class AnswerEditViewModel
+{
+    public required int QuestionID{ get; set;}
+
+    public required int UserID{ get; set; }
+    public required string AnswerText{ get; set; }
 }
