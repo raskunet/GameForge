@@ -7,8 +7,9 @@ namespace GameForge.Models;
 
 public class Library
 {
-    public int LibraryID { get; set; } // Unique identifier for the library
-    public int UserID { get; set; } // ID of the user who owns the library
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int LibraryID { get; set; } // Auto-incremented ID
     public List<Game> DownloadedGames { get; set; } = new List<Game>(); // List of downloaded games
     public int TotalGames 
     {

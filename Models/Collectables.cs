@@ -17,5 +17,4 @@ public class Collectables
             return CollectableItems.Count * 100; // Total number of collectables
         }
     }
-    public string CollectablesDescription { get; set; }=string.Empty; // Optional description of the collection
 }
