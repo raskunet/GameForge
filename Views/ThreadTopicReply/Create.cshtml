@@ -1,46 +1,39 @@
-@model GameForge.Models.ThreadTopicReply
+@model GameForge.Models.ThreadReplyCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Reply";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Add Your Reply</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="ThreadTopicID" />
 
-<h4>ThreadTopicReply</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ThreadTopicID" class="control-label"></label>
-                <select asp-for="ThreadTopicID" class ="form-control" asp-items="ViewBag.ThreadTopicID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Message" class="control-label"></label>
-                <input asp-for="Message" class="form-control" />
-                <span asp-validation-for="Message" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserID" class="control-label"></label>
-                <select asp-for="UserID" class ="form-control" asp-items="ViewBag.UserID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                <!-- Reply Text -->
+                <div class="mb-4">
+                    <label asp-for="ThreadTopicReplyText" class="form-label text-primary fw-bold">Reply</label>
+                    <textarea asp-for="ThreadTopicReplyText" class="form-control form-control-lg" rows="5"
+                        placeholder="Write your reply here..."></textarea>
+                    <span asp-validation-for="ThreadTopicReplyText" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end">
+                    <input type="submit" value="Post Reply" class="btn btn-primary btn-lg shadow-sm me-3" />
+                    <a asp-action="Create" class="btn btn-secondary btn-lg shadow-sm">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
+using System.Diagnostics;
 
 namespace GameForge.Controllers
 {
@@ -46,10 +47,13 @@ namespace GameForge.Controllers
         }
 
         // GET: ThreadTopicReply/Create
-        public IActionResult Create()
+        public IActionResult Create(int ThreadTopicID)
         {
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID");
-            return View();
+            var ThreadReply = new ThreadReplyCreateViewModel
+            {
+                ThreadTopicID=ThreadTopicID
+            };
+            return View(ThreadReply);
         }
 
         // POST: ThreadTopicReply/Create
@@ -57,16 +61,31 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ThreadTopicID,Message,UserID,CreationDate")] ThreadTopicReply threadTopicReply)
+        public async Task<IActionResult> Create([Bind("ThreadTopicID,ThreadTopicReplyText")] ThreadReplyCreateViewModel threadReplyCreateViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(threadTopicReply);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                if(user==null){
+                    return NotFound();
+                }
+                var threadTopic = await _context.ThreadTopic.FirstOrDefaultAsync(m => m.ThreadTopicID == threadReplyCreateViewModel.ThreadTopicID);
+                if(threadTopic==null){
+                    return NotFound();
+                }
+                var threadReply = new ThreadTopicReply
+                {
+                    Message = threadReplyCreateViewModel.ThreadTopicReplyText,
+                    CreationDate = DateTime.UtcNow,
+                    User = user,
+                    ThreadTopic = threadTopic
+
+                };
+                _context.Add(threadReply);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID", threadTopicReply.ThreadTopicID);
-            return View(threadTopicReply);
+            return View(threadReplyCreateViewModel);
         }
 
         // GET: ThreadTopicReply/Edit/5
