@@ -50,8 +50,6 @@ namespace GameForge.Controllers
         [HttpGet]
         public IActionResult Create(int QuestionID)
         {
-            //ViewData["QuestionID"] = QuestionID;
-            Console.WriteLine(QuestionID);
             var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID };
             return View(AnswerCreate);
         }
