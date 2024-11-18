@@ -1,4 +1,4 @@
-@model GameForge.Models.ThreadTopic
+@* @model GameForge.Models.ThreadTopic
 
 @{
     ViewData["Title"] = "Details";
@@ -63,4 +63,273 @@
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Back to List</a>
+</div> *@
+
+
+@* @model GameForge.Models.ThreadPost
+
+@{
+    ViewData["Title"] = "Discussion Thread";
+}
+
+<div class="container mt-5">
+    <!-- Parent Discussion Topic -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@Model.ThreadTopic.Title</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                <i class="bi bi-person-circle"></i> Posted by <strong>@Model.ThreadTopic.User?.Username</strong> on 
+                <em>@Model.ThreadTopic.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
+            </p>
+            <p class="fs-5">@Html.Raw(Html.Encode(Model.ThreadTopic.Message).Replace("\n", "<br>"))</p>
+            <p class="mt-3">
+                <span class="badge bg-info">@Model.ThreadTopic.Tag</span>
+                <span class="badge bg-secondary">Replies: @Model.ThreadTopic.NumberOfReplies</span>
+            </p>
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Edit" asp-route-id="@Model.ThreadTopic.ThreadTopicID" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Back to Threads
+            </a>
+        </div>
+    </div>
+
+    <!-- Replies Section -->
+    <div class="mt-4">
+        <h5 class="mb-4">Replies</h5>
+        @if (Model.ThreadTopic.ThreadTopidcReplies != null && Model.ThreadTopic.ThreadTopidcReplies.Any())
+        {
+            @foreach (var reply in Model.ThreadTopic.ThreadTopidcReplies)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted">
+                            <i class="bi bi-person-circle"></i> Replied by <strong>@reply.User?.Username</strong> on 
+                            <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
+                            @* @if (reply.LastEdited != null)
+                            {
+                                <span class="text-muted">(Last edited: @reply.LastEdited.Value.ToString("MMM dd, yyyy hh:mm tt"))</span>
+                            }
+                        </p>
+                        <p>@Html.Raw(Html.Encode(reply.Message).Replace("\n", "<br>"))</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        @* @if (reply.CanEdit)
+                        {
+                            <a asp-action="EditReply" asp-route-id="@reply.ReplyID" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        } 
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No replies yet. Be the first to reply!</p>
+        }
+    </div>
+
+    <!-- Add Reply Button -->
+    <div class="text-center mt-5">
+        <a asp-action="CreateReply" asp-route-threadID="@Model.ThreadTopic.ThreadTopicID" class="btn btn-primary btn-lg shadow-sm">
+            <i class="bi bi-reply"></i> Add Reply
+        </a>
+    </div>
+</div> *@
+
+@model GameForge.Models.ThreadPost
+
+@{
+    ViewData["Title"] = "Discussion Thread";
+}
+
+<div class="container mt-5">
+    <!-- Parent Discussion Topic -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0">@Model.ThreadTopic.Title</h3>
+        </div>
+        <div class="card-body d-flex">
+            <!-- User Info -->
+            <div class="me-3 text-center" style="width: 150px;">
+                <h6 class="mb-0">@Model.ThreadTopic.User.Username</h6>
+                <small class="text-muted">Posted on <br> 
+                    <em>@Model.ThreadTopic.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
+                </small>
+            </div>
+
+            <!-- Message Content -->
+            <div class="flex-grow-1">
+                <p class="fs-5">@Html.Raw(Html.Encode(Model.ThreadTopic.Message).Replace("\n", "<br>"))</p>
+                <div class="mt-3">
+                    @if (Model.ThreadTopic.Tag.Any())
+                    {
+                        @foreach (var tag in Model.ThreadTopic.Tag)
+                        {
+                            <span class="badge bg-primary">@tag</span>
+                        }
+                    }
+                    <span class="badge bg-secondary">Replies: @Model.ThreadTopic.NumberOfReplies</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Edit" asp-route-id="@Model.ThreadTopic.ThreadTopicID" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Back to Threads
+            </a>
+        </div>
+    </div>
+
+    <!-- Replies Section -->
+    <div class="mt-4">
+        <h5 class="mb-4">Replies</h5>
+        @if (Model.ThreadTopic.ThreadTopidcReplies != null && Model.ThreadTopic.ThreadTopidcReplies.Any())
+        {
+            @foreach (var reply in Model.ThreadTopic.ThreadTopidcReplies)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body d-flex">
+                        <!-- Reply User Info -->
+                        <div class="me-3 text-center" style="width: 120px;">
+                            <h6 class="mb-0">@reply.User.Username</h6>
+                            <small class="text-muted">Replied on <br> 
+                                <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
+                            </small>
+                        </div>
+
+                        <!-- Reply Content -->
+                        <div class="flex-grow-1">
+                            <p>@Html.Raw(Html.Encode(reply.Message).Replace("\n", "<br>"))</p>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a asp-action="Edit" asp-route-id="@reply.ThreadTopicID" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No replies yet. Be the first to reply!</p>
+        }
+    </div>
+
+    <!-- Add Reply Button -->
+    <div class="text-center mt-5">
+            @Html.ActionLink("Write A Reply","Create","ThreadTopicReply",new {Model.ThreadTopic.ThreadTopicID},new {@class="btn btn-secondary"})
+        </a>
+    </div>
 </div>
+
+
+
+@section Styles
+{
+    <style>
+
+        /* Card Styles */
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+        }
+
+        .card-header {
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* User Info Section */
+        .card .text-center  {
+            width: 100%;
+            max-width: 80px;
+            height: auto;
+            border: 2px solid #007bff;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card .text-center h6 {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #343a40;
+        }
+
+        .card .text-center small {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        /* Main Thread and Replies */
+        .fs-5 {
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        /* Reply Section */
+        .reply {
+            border-left: 3px solid #007bff;
+            padding-left: 15px;
+        }
+
+        /* Buttons */
+        .btn-sm {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+}

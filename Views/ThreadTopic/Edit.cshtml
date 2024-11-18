@@ -1,4 +1,4 @@
-@model GameForge.Models.ThreadTopic
+@* @model GameForge.Models.ThreadEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,16 +13,10 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ThreadTopicID" />
-            <input type="hidden" asp-for="UserID" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Message" class="control-label"></label>
@@ -31,23 +25,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Tag" class="control-label"></label>
-                <input asp-for="Tag" class="form-control" />
+                <select asp-for="Tag" class="form-select" asp-items="Model.SelectTags"></select>
                 <span asp-validation-for="Tag" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestReplyID" class="control-label"></label>
-                <input asp-for="LatestReplyID" class="form-control" />
-                <span asp-validation-for="LatestReplyID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestReplyTime" class="control-label"></label>
-                <input asp-for="LatestReplyTime" class="form-control" />
-                <span asp-validation-for="LatestReplyTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumberOfReplies" class="control-label"></label>
-                <input asp-for="NumberOfReplies" class="form-control" />
-                <span asp-validation-for="NumberOfReplies" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -62,4 +41,161 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@
+
+
+@model GameForge.Models.ThreadEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Thread";
+}
+
+<div class="container mt-5">
+    <h1 class="text-primary mb-4">Edit Thread</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Thread Details</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display: none;"></div>
+                <input type="hidden" asp-for="ThreadTopicID" />
+
+                <!-- Title Field -->
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label text-primary fw-bold"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter the thread title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <!-- Message Field -->
+                <div class="mb-3">
+                    <label asp-for="Message" class="form-label text-primary fw-bold"></label>
+                    <textarea asp-for="Message" class="form-control" rows="4"
+                        placeholder="Write your thread message"></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+
+                <!-- Tag Dropdown -->
+                <div class="mb-4">
+                    <label asp-for="Tag" class="form-label text-primary fw-bold"></label>
+                    <div class="custom-select-wrapper">
+                        <select asp-for="Tag" class="form-select form-select-lg custom-select-dropdown" asp-items="Model.SelectTags">
+                            <option value="">Select a tag</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Tag" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@section Styles 
+{
+    <style>
+        /* Edit Page Enhancements */
+        .card {
+            border-radius: 10px;
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .form-label {
+            font-size: 1rem;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 1rem;
+            padding: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            }
+        /* Custom Select Dropdown */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-dropdown {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: #495057;
+            background-color: #f8f9fa;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .custom-select-dropdown:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        .custom-select-dropdown:hover {
+            border-color: #0056b3;
+        }
+
+        .custom-select-dropdown:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        /* Add a dropdown indicator */
+        .custom-select-dropdown {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236c757d'%3E%3Cpath fill-rule='evenodd' d='M1.5 5.5a.5.5 0 0 1 .5-.5h12a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5h-12a.5.5 0 0 1-.5-.5v-.5zM1 8.5a.5.5 0 0 1 .5-.5h14a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5h-14a.5.5 0 0 1-.5-.5v-.5zM1.5 11.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-.5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            }
+    </style>
 }

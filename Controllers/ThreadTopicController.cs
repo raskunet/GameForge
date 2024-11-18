@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
+using Amazon.SecurityToken.Model;
 
 namespace GameForge.Controllers
 {
@@ -27,29 +28,33 @@ namespace GameForge.Controllers
         }
 
         // GET: ThreadTopic/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int  id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var threadTopic = await _context.ThreadTopic
                 .Include(t => t.User)
+                .Include(t=>t.ThreadTopidcReplies)
                 .FirstOrDefaultAsync(m => m.ThreadTopicID == id);
             if (threadTopic == null)
             {
                 return NotFound();
             }
 
-            return View(threadTopic);
+            var threadpostViewModel = new ThreadPost
+            {
+                ThreadTopic = threadTopic,
+                DiscussFlag = false
+            };
+
+            return View(threadpostViewModel);
         }
 
         // GET: ThreadTopic/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID");
-            return View();
+            var threadTopicCreate = new ThreadCreateViewModel();
+            var tags = await _context.ThreadTags.ToListAsync();
+            threadTopicCreate.SelectTags = new SelectList(tags.Select(l => l.TagName).ToList());
+            return View(threadTopicCreate);
         }
 
         // POST: ThreadTopic/Create
@@ -57,33 +62,47 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ThreadTopicID,UserID,Title,CreationDate,Message,Tag,LatestReplyID,LatestReplyTime,NumberOfReplies")] ThreadTopic threadTopic)
+        public async Task<IActionResult> Create([Bind("Title,Message,Tag")] ThreadCreateViewModel threadCreateViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(threadTopic);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                if(user==null){
+                    return NotFound();
+                }
+                var thread = new ThreadTopic 
+                { 
+                    User = user, 
+                    Title = threadCreateViewModel.Title, 
+                    Message = threadCreateViewModel.Message, 
+                    CreationDate = DateTime.UtcNow, 
+                    Tag = threadCreateViewModel.Tag 
+                };
+                _context.Add(thread);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID", threadTopic.UserID);
-            return View(threadTopic);
+            return View(threadCreateViewModel);
         }
 
         // GET: ThreadTopic/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var threadTopic = await _context.ThreadTopic.FindAsync(id);
             if (threadTopic == null)
             {
                 return NotFound();
             }
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID", threadTopic.UserID);
-            return View(threadTopic);
+            var threadEditViewModel = new ThreadEditViewModel
+            {
+                Title = threadTopic.Title,
+                ThreadTopicID = threadTopic.ThreadTopicID,
+                Message = threadTopic.Message,
+                Tag = threadTopic.Tag,
+                SelectTags = new SelectList((await _context.ThreadTags.ToListAsync()).Select(l => l.TagName).ToList())
+            };
+            return View(threadEditViewModel);
+
         }
 
         // POST: ThreadTopic/Edit/5
@@ -91,23 +110,26 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ThreadTopicID,UserID,Title,CreationDate,Message,Tag,LatestReplyID,LatestReplyTime,NumberOfReplies")] ThreadTopic threadTopic)
+        public async Task<IActionResult> Edit([Bind("ThreadTopicID,Title,Message,Tag")] ThreadEditViewModel threadEditViewModel)
         {
-            if (id != threadTopic.ThreadTopicID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var threadTopic = await _context.ThreadTopic.FirstOrDefaultAsync(m => m.ThreadTopicID == threadEditViewModel.ThreadTopicID);
+                    if (threadTopic == null)
+                    {
+                        return NotFound();
+                    }
+                    threadTopic.Message = threadEditViewModel.Message;
+                    threadTopic.Title = threadEditViewModel.Title;
+                    threadTopic.Tag = threadEditViewModel.Tag;
                     _context.Update(threadTopic);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ThreadTopicExists(threadTopic.ThreadTopicID))
+                    if (!ThreadTopicExists(threadEditViewModel.ThreadTopicID))
                     {
                         return NotFound();
                     }
@@ -116,10 +138,9 @@ namespace GameForge.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = threadEditViewModel.ThreadTopicID });
             }
-            ViewData["UserID"] = new SelectList(_context.User, "ID", "ID", threadTopic.UserID);
-            return View(threadTopic);
+            return View(threadEditViewModel);
         }
 
         // GET: ThreadTopic/Delete/5
