@@ -50,5 +50,6 @@ namespace GameForge.Data
 
         public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
         public DbSet<QuestionVote> QuestionVotes{ get; set; } = default!;
+        public DbSet<ThreadTag> ThreadTags { get; set; } = default!;
     }
 }

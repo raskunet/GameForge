@@ -131,6 +131,26 @@ namespace GameForge.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
+            modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
+                {
+                    b.Property<int>("ThreadTagID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTagID"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TagName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ThreadTagID");
+
+                    b.ToTable("ThreadTags");
+                });
+
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
                 {
                     b.Property<int>("ThreadTopicID")
