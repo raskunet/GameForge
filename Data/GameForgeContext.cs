@@ -17,10 +17,7 @@ namespace GameForge.Data
         {
 
             modelBuilder.Entity<ThreadTopicReply>()
-                .HasOne(e => e.ThreadTopic)
-                .WithMany(e => e.ThreadTopidcReplies)
-                .HasForeignKey(e => new { e.ThreadTopicID, e.UserID })
-                .IsRequired();
+            .HasKey(e => new { e.UserID, e.ThreadTopicID });
 
             modelBuilder.Entity<ThreadTopic>()
                 .HasOne(e => e.User)
@@ -35,17 +32,23 @@ namespace GameForge.Data
                 .IsRequired();
 
             modelBuilder.Entity<Answer>()
-                .HasOne(e => e.Question)
-                .WithMany(e => e.Answers)
-                .HasForeignKey(e => new { e.UserID, e.QuestionID })
-                .IsRequired();
+                .HasKey(e => new { e.QuestionID, e.UserID });
+
+            modelBuilder.Entity<QuestionVote>()
+                .HasKey(e => new { e.QuestionID, e.UserID });
+                
+            modelBuilder.Entity<AnswerVote>()
+                .HasKey(e => new { e.QuestionID, e.UserID });
 
         }
 
         public DbSet<User> User { get; set; } = default!;
         public DbSet<ThreadTopic> ThreadTopic { get; set; }
         public DbSet<ThreadTopicReply> ThreadTopicReplies{ get; set; }
-        public DbSet<GameForge.Models.Question> Question { get; set; } = default!;
-        public DbSet<GameForge.Models.Answer> Answer { get; set; } = default!;
+        public DbSet<Question> Question { get; set; } = default!;
+        public DbSet<Answer> Answer { get; set; } = default!;
+
+        public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
+        public DbSet<QuestionVote> QuestionVotes{ get; set; } = default!;
     }
 }

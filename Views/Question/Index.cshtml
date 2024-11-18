@@ -1,17 +1,11 @@
 @model IEnumerable<GameForge.Models.Question>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Index";
 }
 
-<!DOCTYPE html>
+<h1>Index</h1>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -34,16 +28,7 @@
                 @Html.DisplayNameFor(model => model.Downvotes)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LatestAnswerID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LatestAnswerTime)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.NumberOfAnswers)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
             </th>
             <th></th>
         </tr>
@@ -67,25 +52,14 @@
                 @Html.DisplayFor(modelItem => item.Downvotes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LatestAnswerID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LatestAnswerTime)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.NumberOfAnswers)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.ID)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", new { id=item.QuestionID }) |
+                @Html.ActionLink("Details", "Details", new { id=item.QuestionID  }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.QuestionID })
             </td>
         </tr>
 }
     </tbody>
 </table>
-</body>
-</html>
