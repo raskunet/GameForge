@@ -15,7 +15,7 @@ public static class SeedDataUser
             serviceProvider.GetRequiredService<
                 DbContextOptions<GameForgeContext>>()))
         {
-            // Look for any movies.
+            // Look for any Users
             if (context.User.Any())
             {
                 return;   // DB has been seeded
