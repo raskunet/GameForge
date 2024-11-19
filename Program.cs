@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using GameForge.Data;
 using GameForge.Models;
-using GameForge.MiddleWare;
 
 namespace GameForge
 {

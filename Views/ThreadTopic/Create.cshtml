@@ -76,7 +76,6 @@
                     <div class="form-group mb-3">
                         <label asp-for="Tag" class="form-label fw-bold text-primary"></label>
                         <select asp-for="Tag" class="form-select border-primary shadow-sm" asp-items="Model.SelectTags">
-                            <option value="" disabled selected>Select a tag</option>
                         </select>
                         <span asp-validation-for="Tag" class="text-danger"></span>
                     </div>
