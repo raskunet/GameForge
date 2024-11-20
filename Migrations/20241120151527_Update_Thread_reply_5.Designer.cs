@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameForge.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    partial class GameForgeContextModelSnapshot : ModelSnapshot
+    [Migration("20241120151527_Update_Thread_reply_5")]
+    partial class Update_Thread_reply_5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,7 +211,7 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ParentReplyID")
+                    b.Property<int>("ParentReplyID")
                         .HasColumnType("integer");
 
                     b.Property<int>("ThreadTopicID")
@@ -339,7 +342,9 @@ namespace GameForge.Migrations
                 {
                     b.HasOne("GameForge.Models.ThreadTopicReply", "ParentReply")
                         .WithMany()
-                        .HasForeignKey("ParentReplyID");
+                        .HasForeignKey("ParentReplyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GameForge.Models.ThreadTopic", "ThreadTopic")
                         .WithMany("ThreadTopidcReplies")

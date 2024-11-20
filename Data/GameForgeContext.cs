@@ -7,18 +7,10 @@ using GameForge.Models;
 
 namespace GameForge.Data
 {
-    public class GameForgeContext : DbContext
+    public class GameForgeContext(DbContextOptions<GameForgeContext> options) : DbContext(options)
     {
-        public GameForgeContext (DbContextOptions<GameForgeContext> options)
-            : base(options)
-        {
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-
-            modelBuilder.Entity<ThreadTopicReply>()
-            .HasKey(e => new { e.UserID, e.ThreadTopicID });
-
+        {   
             modelBuilder.Entity<ThreadTopic>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.ThreadTopics)

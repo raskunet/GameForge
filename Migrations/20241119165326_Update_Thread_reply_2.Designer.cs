@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameForge.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    partial class GameForgeContextModelSnapshot : ModelSnapshot
+    [Migration("20241119165326_Update_Thread_reply_2")]
+    partial class Update_Thread_reply_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,7 +211,10 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ParentReplyID")
+                    b.Property<int>("ParentReplyID")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ParentThreadReplyThreadTopicReplyID")
                         .HasColumnType("integer");
 
                     b.Property<int>("ThreadTopicID")
@@ -221,9 +227,9 @@ namespace GameForge.Migrations
 
                     b.HasIndex("ParentReplyID");
 
-                    b.HasIndex("ThreadTopicID");
+                    b.HasIndex("ParentThreadReplyThreadTopicReplyID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ThreadTopicID");
 
                     b.ToTable("ThreadTopicReplies");
                 });
@@ -337,9 +343,15 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
-                    b.HasOne("GameForge.Models.ThreadTopicReply", "ParentReply")
+                    b.HasOne("GameForge.Models.User", "User")
+                        .WithMany("ThreadTopicReplies")
+                        .HasForeignKey("ParentReplyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameForge.Models.ThreadTopicReply", "ParentThreadReply")
                         .WithMany()
-                        .HasForeignKey("ParentReplyID");
+                        .HasForeignKey("ParentThreadReplyThreadTopicReplyID");
 
                     b.HasOne("GameForge.Models.ThreadTopic", "ThreadTopic")
                         .WithMany("ThreadTopidcReplies")
@@ -347,13 +359,7 @@ namespace GameForge.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GameForge.Models.User", "User")
-                        .WithMany("ThreadTopicReplies")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentReply");
+                    b.Navigation("ParentThreadReply");
 
                     b.Navigation("ThreadTopic");
 
