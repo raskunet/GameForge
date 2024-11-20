@@ -67,16 +67,17 @@ namespace GameForge.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
-                if(user==null){
+                if (user == null)
+                {
                     return NotFound();
                 }
-                var thread = new ThreadTopic 
-                { 
-                    User = user, 
-                    Title = threadCreateViewModel.Title, 
-                    Message = threadCreateViewModel.Message, 
-                    CreationDate = DateTime.UtcNow, 
-                    Tag = threadCreateViewModel.Tag 
+                var thread = new ThreadTopic
+                {
+                    User = user,
+                    Title = threadCreateViewModel.Title,
+                    Message = threadCreateViewModel.Message,
+                    CreationDate = DateTime.UtcNow,
+                    Tag = threadCreateViewModel.Tag
                 };
                 _context.Add(thread);
                 await _context.SaveChangesAsync();

@@ -1,154 +1,5 @@
 @using Markdig
-@* @model GameForge.Models.ThreadTopic
-
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>ThreadTopic</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreationDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreationDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Message)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Message)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tag)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tag)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LatestReplyID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LatestReplyID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LatestReplyTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LatestReplyTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumberOfReplies)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumberOfReplies)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.ID)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div> *@
-
-
-@* @model GameForge.Models.ThreadPost
-
-@{
-    ViewData["Title"] = "Discussion Thread";
-}
-
-<div class="container mt-5">
-    <!-- Parent Discussion Topic -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">@Model.ThreadTopic.Title</h4>
-        </div>
-        <div class="card-body">
-            <p class="text-muted mb-3">
-                <i class="bi bi-person-circle"></i> Posted by <strong>@Model.ThreadTopic.User?.Username</strong> on 
-                <em>@Model.ThreadTopic.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
-            </p>
-            <p class="fs-5">@Html.Raw(Html.Encode(Model.ThreadTopic.Message).Replace("\n", "<br>"))</p>
-            <p class="mt-3">
-                <span class="badge bg-info">@Model.ThreadTopic.Tag</span>
-                <span class="badge bg-secondary">Replies: @Model.ThreadTopic.NumberOfReplies</span>
-            </p>
-        </div>
-        <div class="card-footer text-end">
-            <a asp-action="Edit" asp-route-id="@Model.ThreadTopic.ThreadTopicID" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil-square"></i> Edit
-            </a>
-            <a asp-action="Index" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Back to Threads
-            </a>
-        </div>
-    </div>
-
-    <!-- Replies Section -->
-    <div class="mt-4">
-        <h5 class="mb-4">Replies</h5>
-        @if (Model.ThreadTopic.ThreadTopidcReplies != null && Model.ThreadTopic.ThreadTopidcReplies.Any())
-        {
-            @foreach (var reply in Model.ThreadTopic.ThreadTopidcReplies)
-            {
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <p class="text-muted">
-                            <i class="bi bi-person-circle"></i> Replied by <strong>@reply.User?.Username</strong> on 
-                            <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
-                            @* @if (reply.LastEdited != null)
-                            {
-                                <span class="text-muted">(Last edited: @reply.LastEdited.Value.ToString("MMM dd, yyyy hh:mm tt"))</span>
-                            }
-                        </p>
-                        <p>@Html.Raw(Html.Encode(reply.Message).Replace("\n", "<br>"))</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between align-items-center">
-                        @* @if (reply.CanEdit)
-                        {
-                            <a asp-action="EditReply" asp-route-id="@reply.ReplyID" class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                        } 
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <p class="text-muted">No replies yet. Be the first to reply!</p>
-        }
-    </div>
-
-    <!-- Add Reply Button -->
-    <div class="text-center mt-5">
-        <a asp-action="CreateReply" asp-route-threadID="@Model.ThreadTopic.ThreadTopicID" class="btn btn-primary btn-lg shadow-sm">
-            <i class="bi bi-reply"></i> Add Reply
-        </a>
-    </div>
-</div> *@
-
 @model GameForge.Models.ThreadPost
-
-@{
-    ViewData["Title"] = "Discussion Thread";
-}
 
 <div class="container mt-5">
     <!-- Parent Discussion Topic -->
@@ -158,9 +9,9 @@
         </div>
         <div class="card-body d-flex">
             <!-- User Info -->
-            <div class="text-center">
+            <div class="text-center me-3" style="width: 120px;">
                 <h6 class="mb-0">@Model.ThreadTopic.User.Username</h6>
-                <small class="text-muted">Posted on <br> 
+                <small class="text-muted">Posted on <br>
                     <em>@Model.ThreadTopic.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
                 </small>
             </div>
@@ -175,7 +26,7 @@
                     {
                         @foreach (var tag in Model.ThreadTopic.Tag)
                         {
-                            <span class="badge bg-primary">@tag</span>
+                            <span class="badge bg-primary me-1">@tag</span>
                         }
                     }
                     <span class="badge bg-secondary">Replies: @Model.ThreadTopic.NumberOfReplies</span>
@@ -186,6 +37,10 @@
             <a asp-action="Edit" asp-route-id="@Model.ThreadTopic.ThreadTopicID" class="btn btn-warning btn-sm">
                 <i class="bi bi-pencil-square"></i> Edit
             </a>
+            @Html.ActionLink("Reply", "Create", "ThreadTopicReply", new
+                {
+                    ThreadTopicID = Model.ThreadTopic.ThreadTopicID
+                }, new { @class = "btn btn-primary btn-sm" })
             <a asp-action="Index" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Back to Threads
             </a>
@@ -204,20 +59,40 @@
                         <!-- Reply User Info -->
                         <div class="me-3 text-center" style="width: 120px;">
                             <h6 class="mb-0">@reply.User.Username</h6>
-                            <small class="text-muted">Replied on <br> 
+                            <small class="text-muted">Replied on <br>
                                 <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
                             </small>
                         </div>
 
                         <!-- Reply Content -->
+                        <div class="vr"></div>
                         <div class="flex-grow-1">
-                            <p>@Html.Raw(Markdown.ToHtml(reply.Message))</p>
+                            <div class="ml-5">
+                                @Html.Raw(Markdown.ToHtml(reply.Message))
+                                @if (reply.ParentReplyID != null)
+                                {
+                                    <small class="text-muted fst-italic" style="font-size: 0.9rem;">
+                                        Replied to: @reply.ParentReplyID
+                                    </small>
+                                }
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer text-end">
-                        <a asp-action="Edit" asp-route-id="@reply.ThreadTopicID" class="btn btn-outline-warning btn-sm">
-                            <i class="bi bi-pencil"></i> Edit
-                        </a>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Reply ID: @reply.ThreadTopicReplyID</small>
+                        </div>
+                        <div>
+                            @Html.ActionLink("Edit","Edit","ThreadTopicReply",new 
+                            {
+                                ThreadTopicReplyID = reply.ThreadTopicReplyID
+                                }, new { @class = "btn btn-warning btn-sm" })
+                            @Html.ActionLink("Reply", "Create", "ThreadTopicReply", new
+                                {
+                                    ThreadTopicID = Model.ThreadTopic.ThreadTopicID,
+                                    ParentReplyID = reply.ThreadTopicReplyID
+                                }, new { @class = "btn btn-primary btn-sm" })
+                        </div>
                     </div>
                 </div>
             }
@@ -227,14 +102,7 @@
             <p class="text-muted">No replies yet. Be the first to reply!</p>
         }
     </div>
-
-    <!-- Add Reply Button -->
-    <div class="text-center mt-5">
-            @Html.ActionLink("Write A Reply","Create","ThreadTopicReply",new {Model.ThreadTopic.ThreadTopicID},new {@class="btn btn-secondary"})
-        </a>
-    </div>
 </div>
-
 
 
 @section Styles
@@ -333,4 +201,4 @@
             background-color: #5a6268;
         }
     </style>
-}
+} 

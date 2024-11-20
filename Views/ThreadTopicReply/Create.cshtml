@@ -13,7 +13,7 @@
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                 <input type="hidden" asp-for="ThreadTopicID" />
-
+                <input type="hidden" asp-for="ParentReplyID"/>
                 <!-- Reply Text -->
                 <div class="mb-4">
                     <label asp-for="ThreadTopicReplyText" class="form-label text-primary fw-bold">Reply</label>

@@ -70,7 +70,17 @@ namespace GameForge.Controllers
                 {
                     return NotFound();
                 }
-                Question question = new() { User = tempUser, Title = questionDat.Title, QuestionText = questionDat.QuestionText, Upvotes = 0, Downvotes = 0, NumberOfAnswers = 0, LatestAnswerID = 0, CreationDate = DateTime.UtcNow };
+                Question question = new()
+                {
+                    User = tempUser,
+                    Title = questionDat.Title,
+                    QuestionText = questionDat.QuestionText,
+                    Upvotes = 0,
+                    Downvotes = 0,
+                    NumberOfAnswers = 0,
+                    LatestAnswerID = 0,
+                    CreationDate = DateTime.UtcNow
+                };
                 _context.Add(question);
                 Console.WriteLine(question);
                 await _context.SaveChangesAsync();

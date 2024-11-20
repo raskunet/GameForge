@@ -71,11 +71,19 @@ namespace GameForge.Controllers
                     return NotFound();
                 }
 
-                var answer = new Answer { Question = question, User = user, CreationDate = DateTime.UtcNow, Upvotes = 0, Downvotes = 0, AnswerText = answerDat.AnswerText };
+                var answer = new Answer
+                {
+                    Question = question,
+                    User = user,
+                    CreationDate = DateTime.UtcNow,
+                    Upvotes = 0,
+                    Downvotes = 0,
+                    AnswerText = answerDat.AnswerText
+                };
                 question.NumberOfAnswers += 1;
                 _context.Add(answer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details","Question" ,new { id = question.QuestionID });
+                return RedirectToAction("Details", "Question", new { id = question.QuestionID });
             }
             return View(answerDat);
         }
