@@ -1,0 +1,53 @@
+@model GameForge.Models.GameCategoryViewModel
+
+@{
+    ViewData["Title"] = "Games";
+}
+
+<h1>Games</h1>
+
+<!-- Search and Filter Form -->
+<form asp-controller="Games" asp-action="Index" method="get">
+    <p>
+        <!-- Category Dropdown -->
+        <select asp-for="GameCategory" asp-items="Model.Categories">
+            <option value="">All</option>
+        </select>
+
+        <!-- Search Box for Title -->
+        <label>Title: <input type="text" asp-for="SearchString" /></label>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<!-- Games Table -->
+@if (Model.Games != null && Model.Games.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Games![0].Title)</th>
+                <th>@Html.DisplayNameFor(model => model.Games![0].Price)</th>
+                <th>@Html.DisplayNameFor(model => model.Games![0].Category)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Games)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PriceAfterDiscount)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No games found.</p>
+}

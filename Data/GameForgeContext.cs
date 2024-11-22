@@ -39,9 +39,14 @@ namespace GameForge.Data
         public DbSet<ThreadTopicReply> ThreadTopicReplies{ get; set; }
         public DbSet<Question> Question { get; set; } = default!;
         public DbSet<Answer> Answer { get; set; } = default!;
-
         public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
         public DbSet<QuestionVote> QuestionVotes{ get; set; } = default!;
         public DbSet<ThreadTag> ThreadTags { get; set; } = default!;
+        public DbSet<Game> Game { get; set; } = default!;
+        public DbSet<Review> Review { get; set; }
+        public DbSet<Purchase> Purchase { get; set; }
+        public DbSet<Developer> Developers { get; set; }
+        
+
     }
 }

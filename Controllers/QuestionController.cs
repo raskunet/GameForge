@@ -65,7 +65,7 @@ namespace GameForge.Controllers
             if (ModelState.IsValid)
             {
                 //TODO : Get Current User From saved Cookie and Use that instead of this 
-                var tempUser = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                var tempUser = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
                 if (tempUser == null)
                 {
                     return NotFound();
@@ -114,7 +114,7 @@ namespace GameForge.Controllers
                 try
                 {
                     var userID = 1;
-                    var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionEditViewModel.QuestionID && m.User.ID == userID);
+                    var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionEditViewModel.QuestionID && m.User.Id == userID);
                     if (question == null)
                     {
                         return NotFound();
@@ -192,7 +192,7 @@ namespace GameForge.Controllers
             Console.WriteLine(questionVoteAction.Type);
 
             var userId = 1; //GetCurrentUserId();
-            var user = await _context.User.FirstOrDefaultAsync(m => m.ID == userId);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
             if (user == null)
             {
                 return NotFound();
