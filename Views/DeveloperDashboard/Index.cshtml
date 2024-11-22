@@ -1,0 +1,82 @@
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@model IEnumerable<GameForge.Models.Game>
+
+@{
+    ViewData["Title"] = "Developer Dashboard";
+}
+
+<h2>Developer Dashboard</h2>
+
+<p>Manage your games below. You can edit prices, apply discounts, and toggle the game’s paid/free status.</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Game Title</th>
+            <th>Current Price</th>
+            <th>Discounted Price</th>
+            <th>Discount (%)</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.Price.ToString("C")</td>
+                <td>@(game.PriceAfterDiscount.ToString("C") ?? "N/A")</td>
+                <td>
+                    <!-- Discount form -->
+                    <form asp-action="ApplyDiscount" method="post" class="form-inline">
+                        <input type="hidden" name="gameId" value="@game.Id" />
+                        <div class="input-group">
+                            <input type="number" name="discountPercentage" min="0" max="100" class="form-control" placeholder="%" required />
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Apply</button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <!-- Paid/free toggle form -->
+                    <form asp-action="TogglePaidStatus" method="post">
+                        <input type="hidden" name="gameId" value="@game.Id" />
+                        <button type="submit" class="btn @(game.IsPaid ? "btn-danger" : "btn-success")">
+                            @(game.IsPaid ? "Paid" : "Free")
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <!-- Edit button -->
+                        <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-warning">Edit</a>
+
+                        <!-- Delete form -->
+                        <form asp-action="Delete" asp-route-id="@game.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this game?');" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Additional CSS for better styling -->
+<style>
+    .table {
+        margin-top: 20px;
+    }
+    .form-inline .input-group {
+        display: inline-flex;
+        align-items: center;
+    }
+</style>
