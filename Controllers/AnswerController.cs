@@ -65,7 +65,7 @@ namespace GameForge.Controllers
             {
                 var userID = 1;
                 var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
-                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == userID);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                 if (question == null || user == null)
                 {
                     return NotFound();
@@ -180,7 +180,7 @@ namespace GameForge.Controllers
         public async Task<IActionResult> AnswerVote([FromBody] AnswerVoteAction answerVoteAction)
         {
 
-            var user = await _context.User.FirstOrDefaultAsync(m => m.ID == answerVoteAction.UserID);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == answerVoteAction.UserID);
             if (user == null) return NotFound();
 
             var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerVoteAction.QuestionID);

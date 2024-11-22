@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameForge.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    partial class GameForgeContextModelSnapshot : ModelSnapshot
+    [Migration("20241122095250_New_Data_From_Hamza")]
+    partial class New_Data_From_Hamza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,26 +212,6 @@ namespace GameForge.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
-<<<<<<< Updated upstream
-            modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
-                {
-                    b.Property<int>("ThreadTagID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTagID"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TagName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ThreadTagID");
-
-                    b.ToTable("ThreadTags");
-=======
             modelBuilder.Entity("GameForge.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -258,7 +241,6 @@ namespace GameForge.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Review");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
@@ -305,11 +287,11 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
-                    b.Property<int>("ThreadTopicReplyID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserID")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTopicReplyID"));
+                    b.Property<int>("ThreadTopicID")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
@@ -318,22 +300,9 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ParentReplyID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ThreadTopicID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ThreadTopicReplyID");
-
-                    b.HasIndex("ParentReplyID");
+                    b.HasKey("UserID", "ThreadTopicID");
 
                     b.HasIndex("ThreadTopicID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("ThreadTopicReplies");
                 });
@@ -505,10 +474,6 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
-                    b.HasOne("GameForge.Models.ThreadTopicReply", "ParentReply")
-                        .WithMany()
-                        .HasForeignKey("ParentReplyID");
-
                     b.HasOne("GameForge.Models.ThreadTopic", "ThreadTopic")
                         .WithMany("ThreadTopidcReplies")
                         .HasForeignKey("ThreadTopicID")
@@ -520,8 +485,6 @@ namespace GameForge.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ParentReply");
 
                     b.Navigation("ThreadTopic");
 
