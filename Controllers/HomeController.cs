@@ -23,7 +23,7 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Library()
+    public IActionResult Collectables()
     {
         return View();
     }

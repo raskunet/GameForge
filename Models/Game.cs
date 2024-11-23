@@ -8,6 +8,7 @@ namespace GameForge.Models;
 public class Game
 {
     public int GameID { get; set; } // Unique identifier for the game
+    public int UserID { get; set; }
     public string GameName { get; set; }=string.Empty; // Name of the game
     public string Developer { get; set; }=string.Empty; // Developer of the game
     public string Publisher { get; set; }=string.Empty; // Publisher of the game

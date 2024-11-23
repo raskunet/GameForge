@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -7,10 +8,10 @@ namespace GameForge.Models;
 
 public class Library
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int LibraryID { get; set; } // Auto-incremented ID
-    public List<Game> DownloadedGames { get; set; } = new List<Game>(); // List of downloaded games
+
+    public int UserID { get; set; } // ID of the user who owns the collectables
+    public ICollection<Game> DownloadedGames { get; } = new List<Game>(); // List of downloaded games
     public int TotalGames 
     {
         get

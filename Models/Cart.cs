@@ -7,9 +7,9 @@ namespace GameForge.Models;
 
 public class Cart
 {
-    [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CartID { get; set; } // Unique identifier for the cart
+    public int UserID { get; set; }
     public List<Game> CartItems { get; set; } = new List<Game>(); // List of items in the cart
     public decimal TotalPrice 
     { 

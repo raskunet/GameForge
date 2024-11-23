@@ -1,0 +1,31 @@
+@model GameForge.Models.Library
+
+@{
+    ViewData["Title"] = "Library - Downloaded Games";
+}
+
+<h2>@Model.User - Downloaded Games</h2>
+
+<!-- Table to display games -->
+<table class="table table-bordered table-striped">
+    <p>Heelofsjkebfw</p>
+    @* <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Purchase Date</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model.DownloadedGames)
+        {
+            <tr>
+                <td>@game.GameName</td>
+                <td>@game.Category</td>
+                <td>@game.ReleaseDate.ToString("yyyy-MM-dd")</td>
+                <td>@game.Price.ToString("C")</td>
+            </tr>
+        }
+    </tbody> *@
+</table>
