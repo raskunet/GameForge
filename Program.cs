@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using GameForge.Data;
 using GameForge.Models;
+
 namespace GameForge
 {
     internal class Program
@@ -27,6 +28,7 @@ namespace GameForge
                 var services = scope.ServiceProvider;
 
                 SeedDataUser.Initialize(services);
+                SeedDataTag.Initialize(services);
             }
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -43,6 +45,11 @@ namespace GameForge
             app.UseRouting();
 
             app.UseAuthorization();
+
+            //app.Map("/Question/Create", FormatTextMiddleWareExt.UseFormatText);
+            // TODO : Make a custom MiddleWare Class for handling this 
+            //app.UseWhen(context => context.Request.Path.StartsWithSegments("/Question/Create", StringComparison.OrdinalIgnoreCase), appBuild=>appBuild.UseMiddleware<FormatTextMiddleWare>());
+
 
             app.MapControllerRoute(
                 name: "default",

@@ -7,18 +7,10 @@ using GameForge.Models;
 
 namespace GameForge.Data
 {
-    public class GameForgeContext : DbContext
+    public class GameForgeContext(DbContextOptions<GameForgeContext> options) : DbContext(options)
     {
-        public GameForgeContext (DbContextOptions<GameForgeContext> options)
-            : base(options)
-        {
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-
-            modelBuilder.Entity<ThreadTopicReply>()
-            .HasKey(e => new { e.UserID, e.ThreadTopicID });
-
+        {   
             modelBuilder.Entity<ThreadTopic>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.ThreadTopics)
@@ -62,9 +54,15 @@ namespace GameForge.Data
         public DbSet<ThreadTopicReply> ThreadTopicReplies{ get; set; }
         public DbSet<Question> Question { get; set; } = default!;
         public DbSet<Answer> Answer { get; set; } = default!;
-
         public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
         public DbSet<QuestionVote> QuestionVotes{ get; set; } = default!;
+        public DbSet<ThreadTag> ThreadTags { get; set; } = default!;
+        public DbSet<Game> Game { get; set; } = default!;
+        public DbSet<Review> Review { get; set; }
+        public DbSet<Purchase> Purchase { get; set; }
+        public DbSet<Developer> Developers { get; set; }
+        
+
 
         public DbSet<Cart> Cart{ get; set; } = default!;
         public DbSet<Collectables> Collectables{ get; set; } = default!;

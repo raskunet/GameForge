@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameForge.Models;
@@ -27,20 +28,30 @@ public class ThreadTopic
     public User User { get; set; } = null!;
 }
 
-[PrimaryKey("ThreadTopicID", "UserID")]
-public class ThreadTopicReply
-{
-    public int ThreadTopicID { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public int UserID { get; set; }
-    public DateTime CreationDate { get; set; }
-    public required ThreadTopic ThreadTopic { get; set; }
-    public required User User{ get; set; }
-}
-
 [NotMapped]
 public class ThreadPost
 {
     public required ThreadTopic ThreadTopic { get; set; }
-    public List<ThreadTopicReply> ThreadTopicReplies { get; } = new List<ThreadTopicReply>();
+    public required bool DiscussFlag{ get; set; }
+    //public List<ThreadTopicReply> ThreadTopicReplies { get; } = new List<ThreadTopicReply>();
+}
+
+[NotMapped]
+public class ThreadCreateViewModel
+{
+    public string Title { get; set; } = null!;
+    public string Message { get; set; } = null!;
+    public List<string> Tag { get; set; } = null!;
+    public SelectList? SelectTags { get; set; }
+}
+
+[NotMapped]
+public class ThreadEditViewModel
+{
+    public required int ThreadTopicID { get; set; }
+    public required string Title { get; set; }
+    public required string Message { get; set; }
+    public required List<string> Tag { get; set; }
+    public SelectList? SelectTags { get; set; }
+
 }

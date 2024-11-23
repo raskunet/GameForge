@@ -1,4 +1,4 @@
-@model IEnumerable<GameForge.Models.ThreadTopic>
+@* @model IEnumerable<GameForge.Models.ThreadTopic>
 
 @{
     ViewData["Title"] = "Index";
@@ -64,7 +64,7 @@
                 @Html.DisplayFor(modelItem => item.NumberOfReplies)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.ID)
+                @Html.DisplayFor(modelItem => item.User.Id)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
@@ -74,4 +74,92 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@
+
+
+
+@model IEnumerable<GameForge.Models.ThreadTopic>
+
+@{
+    ViewData["Title"] = "Discussion Threads";
+}
+
+<h1 class="text-center my-4 text-primary">Discussion Threads</h1>
+
+<div class="text-end mb-4">
+    <a asp-action="Create" class="btn btn-primary btn-lg shadow-sm">
+        <i class="bi bi-plus-circle me-2"></i>Create New Thread
+    </a>
+</div>
+
+<!-- Threads Table -->
+<div class="table-responsive">
+    <table class="table table-hover table-striped align-middle shadow-sm">
+        <thead class="table-primary">
+            <tr>
+                <th>Title</th>
+                <th>Created On</th>
+                <th>Replies</th>
+                <th>Posted By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.ThreadTopicID"
+                                class="fw-bold text-primary text-decoration-none">
+                                @item.Title
+                            </a>
+                        </td>
+                        <td>@item.CreationDate.ToString("MMM dd, yyyy")</td>
+                        <td>@item.NumberOfReplies</td>
+                        <td>@item.User.Username</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">
+                        <i class="bi bi-info-circle"></i> No threads available. Be the first to
+                        <a asp-action="Create" class="text-decoration-none">create one</a>!
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@section Styles {
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f9f9f9;
+            transition: background-color 0.2s;
+        }
+
+        .text-primary a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.4em 0.6em;
+        }
+    </style>
+}

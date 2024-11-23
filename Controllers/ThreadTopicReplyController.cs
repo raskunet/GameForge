@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
+using System.Diagnostics;
 
 namespace GameForge.Controllers
 {
@@ -46,10 +47,14 @@ namespace GameForge.Controllers
         }
 
         // GET: ThreadTopicReply/Create
-        public IActionResult Create()
+        public IActionResult Create(int ThreadTopicID, int? ParentReplyID)
         {
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID");
-            return View();
+            var ThreadReply = new ThreadReplyCreateViewModel
+            {
+                ThreadTopicID = ThreadTopicID,
+                ParentReplyID = ParentReplyID
+            };
+            return View(ThreadReply);
         }
 
         // POST: ThreadTopicReply/Create
@@ -57,33 +62,51 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ThreadTopicID,Message,UserID,CreationDate")] ThreadTopicReply threadTopicReply)
+        public async Task<IActionResult> Create([Bind("ThreadTopicID,ThreadTopicReplyText,ParentReplyID")] ThreadReplyCreateViewModel threadReplyCreateViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(threadTopicReply);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                var threadTopic = await _context.ThreadTopic.FirstOrDefaultAsync(m => m.ThreadTopicID == threadReplyCreateViewModel.ThreadTopicID);
+                if (threadTopic == null)
+                {
+                    return NotFound();
+                }
+                var parentReply = await _context.ThreadTopicReplies.FindAsync(threadReplyCreateViewModel.ParentReplyID);
+                var threadReply = new ThreadTopicReply
+                {
+                    Message = threadReplyCreateViewModel.ThreadTopicReplyText,
+                    CreationDate = DateTime.UtcNow,
+                    User = user,
+                    ThreadTopic = threadTopic,
+                    ParentReply = parentReply,
+                };
+                _context.Add(threadReply);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID", threadTopicReply.ThreadTopicID);
-            return View(threadTopicReply);
+            return View(threadReplyCreateViewModel);
         }
 
         // GET: ThreadTopicReply/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int ThreadTopicReplyID)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var threadTopicReply = await _context.ThreadTopicReplies.FindAsync(id);
+            var threadTopicReply = await _context.ThreadTopicReplies.FindAsync(ThreadTopicReplyID);
             if (threadTopicReply == null)
             {
                 return NotFound();
             }
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID", threadTopicReply.ThreadTopicID);
-            return View(threadTopicReply);
+            var ThreadReplyEditModel = new ThreadReplyEditViewModel
+            {
+                ThreadTopicID = threadTopicReply.ThreadTopicReplyID,
+                ThreadTopicReplyText = threadTopicReply.Message,
+                //ParentReplyID = threadTopicReply.ParentReplyID
+            };
+            return View(ThreadReplyEditModel);
         }
 
         // POST: ThreadTopicReply/Edit/5
@@ -91,23 +114,23 @@ namespace GameForge.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ThreadTopicID,Message,UserID,CreationDate")] ThreadTopicReply threadTopicReply)
+        public async Task<IActionResult> Edit([Bind("ThreadTopicID,ThreadTopicReplyID,ThreadTopicReplyText")] ThreadReplyEditViewModel threadTopicEditReply)
         {
-            if (id != threadTopicReply.ThreadTopicID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(threadTopicReply);
+                    var threadreply = await _context.ThreadTopicReplies.FindAsync(threadTopicEditReply.ThreadTopicID);
+                    if(threadreply==null){
+                        return NotFound();
+                    }
+                    threadreply.Message = threadTopicEditReply.ThreadTopicReplyText;
+                    _context.Update(threadreply);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ThreadTopicReplyExists(threadTopicReply.ThreadTopicID))
+                    if (!ThreadTopicReplyExists(threadTopicEditReply.ThreadTopicID))
                     {
                         return NotFound();
                     }
@@ -116,10 +139,9 @@ namespace GameForge.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "ThreadTopic", new { id = threadTopicEditReply.ThreadTopicID });
             }
-            ViewData["ThreadTopicID"] = new SelectList(_context.ThreadTopic, "ThreadTopicID", "ThreadTopicID", threadTopicReply.ThreadTopicID);
-            return View(threadTopicReply);
+            return View(threadTopicEditReply);
         }
 
         // GET: ThreadTopicReply/Delete/5

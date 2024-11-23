@@ -50,8 +50,6 @@ namespace GameForge.Controllers
         [HttpGet]
         public IActionResult Create(int QuestionID)
         {
-            //ViewData["QuestionID"] = QuestionID;
-            Console.WriteLine(QuestionID);
             var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID };
             return View(AnswerCreate);
         }
@@ -67,17 +65,25 @@ namespace GameForge.Controllers
             {
                 var userID = 1;
                 var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
-                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == userID);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                 if (question == null || user == null)
                 {
                     return NotFound();
                 }
 
-                var answer = new Answer { Question = question, User = user, CreationDate = DateTime.UtcNow, Upvotes = 0, Downvotes = 0, AnswerText = answerDat.AnswerText };
+                var answer = new Answer
+                {
+                    Question = question,
+                    User = user,
+                    CreationDate = DateTime.UtcNow,
+                    Upvotes = 0,
+                    Downvotes = 0,
+                    AnswerText = answerDat.AnswerText
+                };
                 question.NumberOfAnswers += 1;
                 _context.Add(answer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details","Question" ,new { id = question.QuestionID });
+                return RedirectToAction("Details", "Question", new { id = question.QuestionID });
             }
             return View(answerDat);
         }
@@ -174,7 +180,7 @@ namespace GameForge.Controllers
         public async Task<IActionResult> AnswerVote([FromBody] AnswerVoteAction answerVoteAction)
         {
 
-            var user = await _context.User.FirstOrDefaultAsync(m => m.ID == answerVoteAction.UserID);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == answerVoteAction.UserID);
             if (user == null) return NotFound();
 
             var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerVoteAction.QuestionID);

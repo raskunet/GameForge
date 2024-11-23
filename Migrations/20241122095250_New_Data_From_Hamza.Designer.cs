@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameForge.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,13 +13,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    partial class GameForgeContextModelSnapshot : ModelSnapshot
+    [Migration("20241122095250_New_Data_From_Hamza")]
+    partial class New_Data_From_Hamza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -147,138 +150,6 @@ namespace GameForge.Migrations
                     b.ToTable("Purchase");
                 });
 
-            modelBuilder.Entity("GameForge.Models.Cart", b =>
-                {
-                    b.Property<int>("CartID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CartID"));
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsCheckedOut")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("CartID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Cart");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Collectables", b =>
-                {
-                    b.Property<int>("CollectableID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CollectableID", "UserID");
-
-                    b.ToTable("Collectables");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Game", b =>
-                {
-                    b.Property<int>("GameID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("CartID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("CartUserID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("CollectablesCollectableID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("CollectablesUserID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Developer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("GameName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("LibraryID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("LibraryUserID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Platform")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Publisher")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double?>("Rating")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("WishlistID")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("WishlistUserID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("GameID", "UserID");
-
-                    b.HasIndex("CartID", "CartUserID");
-
-                    b.HasIndex("CollectablesCollectableID", "CollectablesUserID");
-
-                    b.HasIndex("LibraryID", "LibraryUserID");
-
-                    b.HasIndex("WishlistID", "WishlistUserID");
-
-                    b.ToTable("Game");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Library", b =>
-                {
-                    b.Property<int>("LibraryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LibraryID"));
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("LibraryCreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("LibraryID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Library");
-                });
-
             modelBuilder.Entity("GameForge.Models.Question", b =>
                 {
                     b.Property<int>("QuestionID")
@@ -341,26 +212,6 @@ namespace GameForge.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
-<<<<<<< Updated upstream
-            modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
-                {
-                    b.Property<int>("ThreadTagID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTagID"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TagName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ThreadTagID");
-
-                    b.ToTable("ThreadTags");
-=======
             modelBuilder.Entity("GameForge.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -390,7 +241,6 @@ namespace GameForge.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Review");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
@@ -417,7 +267,7 @@ namespace GameForge.Migrations
                     b.Property<int>("NumberOfReplies")
                         .HasColumnType("integer");
 
-                    b.PrimitiveCollection<List<string>>("Tag")
+                    b.Property<List<string>>("Tag")
                         .IsRequired()
                         .HasColumnType("text[]");
 
@@ -437,11 +287,11 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
-                    b.Property<int>("ThreadTopicReplyID")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserID")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTopicReplyID"));
+                    b.Property<int>("ThreadTopicID")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
@@ -450,22 +300,9 @@ namespace GameForge.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ParentReplyID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ThreadTopicID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ThreadTopicReplyID");
-
-                    b.HasIndex("ParentReplyID");
+                    b.HasKey("UserID", "ThreadTopicID");
 
                     b.HasIndex("ThreadTopicID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("ThreadTopicReplies");
                 });
@@ -513,19 +350,6 @@ namespace GameForge.Migrations
                     b.HasBaseType("GameForge.Models.User");
 
                     b.HasDiscriminator().HasValue("Developer");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Wishlist", b =>
-                {
-                    b.Property<int>("WishlistID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("WishlistID", "UserID");
-
-                    b.ToTable("Wishlist");
                 });
 
             modelBuilder.Entity("GameForge.Models.Answer", b =>
@@ -596,47 +420,6 @@ namespace GameForge.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GameForge.Models.Cart", b =>
-                {
-                    b.HasOne("GameForge.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Game", b =>
-                {
-                    b.HasOne("GameForge.Models.Cart", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartID", "CartUserID");
-
-                    b.HasOne("GameForge.Models.Collectables", null)
-                        .WithMany("CollectableItems")
-                        .HasForeignKey("CollectablesCollectableID", "CollectablesUserID");
-
-                    b.HasOne("GameForge.Models.Library", null)
-                        .WithMany("DownloadedGames")
-                        .HasForeignKey("LibraryID", "LibraryUserID");
-
-                    b.HasOne("GameForge.Models.Wishlist", null)
-                        .WithMany("WishlistItems")
-                        .HasForeignKey("WishlistID", "WishlistUserID");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Library", b =>
-                {
-                    b.HasOne("GameForge.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("GameForge.Models.Question", b =>
                 {
                     b.HasOne("GameForge.Models.User", "User")
@@ -691,10 +474,6 @@ namespace GameForge.Migrations
 
             modelBuilder.Entity("GameForge.Models.ThreadTopicReply", b =>
                 {
-                    b.HasOne("GameForge.Models.ThreadTopicReply", "ParentReply")
-                        .WithMany()
-                        .HasForeignKey("ParentReplyID");
-
                     b.HasOne("GameForge.Models.ThreadTopic", "ThreadTopic")
                         .WithMany("ThreadTopidcReplies")
                         .HasForeignKey("ThreadTopicID")
@@ -707,8 +486,6 @@ namespace GameForge.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ParentReply");
-
                     b.Navigation("ThreadTopic");
 
                     b.Navigation("User");
@@ -717,21 +494,6 @@ namespace GameForge.Migrations
             modelBuilder.Entity("GameForge.Models.Game", b =>
                 {
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Cart", b =>
-                {
-                    b.Navigation("CartItems");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Collectables", b =>
-                {
-                    b.Navigation("CollectableItems");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Library", b =>
-                {
-                    b.Navigation("DownloadedGames");
                 });
 
             modelBuilder.Entity("GameForge.Models.Question", b =>
@@ -766,11 +528,6 @@ namespace GameForge.Migrations
             modelBuilder.Entity("GameForge.Models.Developer", b =>
                 {
                     b.Navigation("CreatedGames");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Wishlist", b =>
-                {
-                    b.Navigation("WishlistItems");
                 });
 #pragma warning restore 612, 618
         }

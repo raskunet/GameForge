@@ -1,3 +1,4 @@
+@using Markdig
 @model GameForge.Models.QuestionPost
 
 @{
@@ -19,6 +20,7 @@
         <div class="fw-bold id="questionVoteCount">@(Model.Question.Upvotes-Model.Question.Downvotes)</div>
         <button class="btn p-0" title="Downvote" onclick="QuestionVote(@Model.Question.QuestionID,false)">
             <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-danger" style="transform: rotate(180deg);">
+    using System.Text.Encodings.Web;
                 <polygon points="12,0 24,24 0,24"/>
             </svg>
         </button>
@@ -26,7 +28,9 @@
 
     <!-- Question Text Section -->
     <div class="flex-grow-1">
-        <p class="fs-5">@Model.Question.QuestionText</p>
+        <p class="fs-5">
+            @Html.Raw(Markdown.ToHtml(Model.Question.QuestionText))
+        </p>
     </div>
     <div class="ms-3">
         @Html.ActionLink("Edit", "Edit", new { id = Model.Question.QuestionID }, new { @class = "btn btn-secondary" }) 

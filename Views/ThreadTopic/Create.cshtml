@@ -1,7 +1,7 @@
-@model GameForge.Models.ThreadTopic
+@* @model GameForge.Models.ThreadCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Thread";
 }
 
 <h1>Create</h1>
@@ -13,23 +13,9 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ThreadTopicID" class="control-label"></label>
-                <input asp-for="ThreadTopicID" class="form-control" />
-                <span asp-validation-for="ThreadTopicID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserID" class="control-label"></label>
-                <select asp-for="UserID" class ="form-control" asp-items="ViewBag.UserID"></select>
-            </div>
-            <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Message" class="control-label"></label>
@@ -38,23 +24,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Tag" class="control-label"></label>
-                <input asp-for="Tag" class="form-control" />
-                <span asp-validation-for="Tag" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestReplyID" class="control-label"></label>
-                <input asp-for="LatestReplyID" class="form-control" />
-                <span asp-validation-for="LatestReplyID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LatestReplyTime" class="control-label"></label>
-                <input asp-for="LatestReplyTime" class="form-control" />
-                <span asp-validation-for="LatestReplyTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumberOfReplies" class="control-label"></label>
-                <input asp-for="NumberOfReplies" class="form-control" />
-                <span asp-validation-for="NumberOfReplies" class="text-danger"></span>
+                <select asp-for="Tag" class="form-control" asp-items="Model.Tags"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -69,4 +39,72 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@
+
+@model GameForge.Models.ThreadCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Thread";
 }
+
+<h1 class="text-center my-4 text-primary">Create a New Thread</h1>
+
+<h4 class="text-secondary">Start a Discussion</h4>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Thread Title -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="form-label fw-bold text-primary"></label>
+                        <input asp-for="Title" class="form-control border-primary shadow-sm" placeholder="Enter thread title..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <!-- Thread Message -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Message" class="form-label fw-bold text-primary"></label>
+                        <textarea asp-for="Message" class="form-control border-primary shadow-sm" rows="5" placeholder="Write your message here..." style="resize: vertical;"></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+
+                    <!-- Thread Tag -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Tag" class="form-label fw-bold text-primary"></label>
+                        <select asp-for="Tag" class="form-select border-primary shadow-sm" asp-items="Model.SelectTags">
+                        </select>
+                        <span asp-validation-for="Tag" class="text-danger"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="loadingSpinner"></span>
+                            Create Thread
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back to List Link -->
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-outline-secondary shadow-sm">Back to List</a>
+</div>
+
+@section Scripts {
+        <script>
+            // Add animation on button click
+            document.getElementById("submitBtn").addEventListener("click", function () {
+                const spinner = document.getElementById("loadingSpinner");
+                spinner.classList.remove("d-none");
+            });
+        </script>
+}
+
