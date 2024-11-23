@@ -21,10 +21,37 @@ namespace GameForge.Controllers
         }
 
         // GET: ThreadTopic
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ThreadTag, string ThreadSearchString)
         {
-            var gameForgeContext = _context.ThreadTopic.Include(t => t.User);
-            return View(await gameForgeContext.ToListAsync());
+            if (_context.ThreadTopic == null)
+            {
+                return Problem("Entity set 'MvcMovieContext.Movie'  is null.");
+            }
+
+
+            IQueryable<string> tagQuery = from t in _context.ThreadTags select t.TagName;
+
+
+            var threadTopics = from m in _context.ThreadTopic
+                               select m;
+
+            if (!string.IsNullOrEmpty(ThreadSearchString))
+            {
+                threadTopics = threadTopics.Where(s => s.Title!.ToUpper().Contains(ThreadSearchString.ToUpper()));
+            }
+
+            if (!string.IsNullOrEmpty(ThreadTag))
+            {
+                threadTopics = threadTopics.Where(x => x.Tag.Contains(ThreadTag));
+            }
+
+            var threadSearchviewModel = new ThreadSearchViewModel
+            {
+                Tags = new SelectList(await tagQuery.ToListAsync()),
+                ThreadTopics = new (await threadTopics.ToListAsync())
+            };
+            
+            return View(threadSearchviewModel);
         }
 
         // GET: ThreadTopic/Details/5
@@ -66,7 +93,7 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
                 if (user == null)
                 {
                     return NotFound();

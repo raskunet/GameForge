@@ -55,3 +55,12 @@ public class ThreadEditViewModel
     public SelectList? SelectTags { get; set; }
 
 }
+
+[NotMapped]
+public class ThreadSearchViewModel
+{
+    public List<ThreadTopic>? ThreadTopics { get; set; }
+    public SelectList? Tags { get; set; }
+    public string? ThreadTag { get; set; }
+    public string? ThreadSearchString { get; set; }
+}

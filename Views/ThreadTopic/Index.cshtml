@@ -1,88 +1,8 @@
-@* @model IEnumerable<GameForge.Models.ThreadTopic>
+@model GameForge.Models.ThreadSearchViewModel
 
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreationDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tag)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LatestReplyID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LatestReplyTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberOfReplies)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tag)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LatestReplyID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LatestReplyTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfReplies)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@
-
-
-
-@model IEnumerable<GameForge.Models.ThreadTopic>
-
-@{
+@* @{
     ViewData["Title"] = "Discussion Threads";
-}
+} *@
 
 <h1 class="text-center my-4 text-primary">Discussion Threads</h1>
 
@@ -92,46 +12,58 @@
     </a>
 </div>
 
+
+<form asp-controller="ThreadTopic" asp-action="Index" method="get">
+    <p>
+        <select asp-for="ThreadTag" asp-items="Model.Tags">
+            <option value="">All</option>
+        </select>
+        <label>Title: <input type="text" asp-for="ThreadSearchString" /></label>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<p>@Model.ThreadTopics![0].Title</p>
+
 <!-- Threads Table -->
 <div class="table-responsive">
-    <table class="table table-hover table-striped align-middle shadow-sm">
-        <thead class="table-primary">
-            <tr>
-                <th>Title</th>
-                <th>Created On</th>
-                <th>Replies</th>
-                <th>Posted By</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.ThreadTopicID"
-                                class="fw-bold text-primary text-decoration-none">
-                                @item.Title
-                            </a>
-                        </td>
-                        <td>@item.CreationDate.ToString("MMM dd, yyyy")</td>
-                        <td>@item.NumberOfReplies</td>
-                        <td>@item.User.Username</td>
-                    </tr>
-                }
-            }
-            else
-            {
+    @if (Model.ThreadTopics != null && Model.ThreadTopics.Any())
+    {
+        <table class="table table-hover table-striped align-middle shadow-sm">
+            <thead class="table-primary">
                 <tr>
-                    <td colspan="8" class="text-center text-muted">
-                        <i class="bi bi-info-circle"></i> No threads available. Be the first to
-                        <a asp-action="Create" class="text-decoration-none">create one</a>!
-                    </td>
+                    <th>Title</th>
+                    <th>Created On</th>
+                    <th>Replies</th>
+                    <th>Posted By</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var thread in Model.ThreadTopics ?? Enumerable.Empty<ThreadTopic>())
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@thread.ThreadTopicID"
+                                    class="fw-bold text-primary text-decoration-none">
+                                    @thread.Title
+                                </a>
+                            </td>
+                            <td>@thread.CreationDate.ToString("MM dd, yyyy")</td>
+                            <td>@thread.NumberOfReplies</td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    }
+    else
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    <i class="bi bi-info-circle"></i> No threads available. Be the first to
+                    <a asp-action="Create" class="text-decoration-none">create one</a>!
+                </td>
+            </tr>
+        }
 </div>
 
 
@@ -162,4 +94,10 @@
             padding: 0.4em 0.6em;
         }
     </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

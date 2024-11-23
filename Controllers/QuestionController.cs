@@ -15,10 +15,17 @@ namespace GameForge.Controllers
         }
 
         // GET: Question
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string QuestionSearchString)
         {
-            var gameForgeContext = _context.Question.Include(q => q.User);
-            return View(await gameForgeContext.ToListAsync());
+            if(_context.Question==null){
+                return Problem("Entity Set `GameForge.Models.Question` is null");
+            }
+            var questions = from q in _context.Question
+                            select q;
+            if(!string.IsNullOrEmpty(QuestionSearchString)){
+                questions = questions.Where(w => w.Title!.ToUpper().Contains(QuestionSearchString.ToUpper()));
+            }
+            return View(await questions.ToListAsync());
         }
 
         // GET: Question/Details/5

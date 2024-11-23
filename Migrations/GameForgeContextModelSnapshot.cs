@@ -209,7 +209,6 @@ namespace GameForge.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
-<<<<<<< Updated upstream
             modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
                 {
                     b.Property<int>("ThreadTagID")
@@ -228,7 +227,7 @@ namespace GameForge.Migrations
                     b.HasKey("ThreadTagID");
 
                     b.ToTable("ThreadTags");
-=======
+                });
             modelBuilder.Entity("GameForge.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -258,7 +257,6 @@ namespace GameForge.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Review");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
