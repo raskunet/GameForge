@@ -11,7 +11,11 @@ namespace GameForge
         {
             var root = Directory.GetCurrentDirectory();
             var dotenv = Path.Combine(root, ".env");
-            DotEnv.PGSQLConnStringLoad(dotenv, "POSTGRES");
+            if (!DotEnv.PGSQLConnStringLoad(dotenv, "POSTGRES"))
+            {
+                Environment.ExitCode = -1;
+                return;
+            }
 
 
             var builder = WebApplication.CreateBuilder(args);

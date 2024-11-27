@@ -164,6 +164,9 @@ namespace GameForge.Migrations
                     b.Property<int>("Downvotes")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("LastEditTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("LatestAnswerID")
                         .HasColumnType("integer");
 
@@ -209,25 +212,6 @@ namespace GameForge.Migrations
                     b.ToTable("QuestionVotes");
                 });
 
-            modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
-                {
-                    b.Property<int>("ThreadTagID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTagID"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TagName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ThreadTagID");
-
-                    b.ToTable("ThreadTags");
-                });
             modelBuilder.Entity("GameForge.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -259,6 +243,26 @@ namespace GameForge.Migrations
                     b.ToTable("Review");
                 });
 
+            modelBuilder.Entity("GameForge.Models.ThreadTag", b =>
+                {
+                    b.Property<int>("ThreadTagID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTagID"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TagName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ThreadTagID");
+
+                    b.ToTable("ThreadTags");
+                });
+
             modelBuilder.Entity("GameForge.Models.ThreadTopic", b =>
                 {
                     b.Property<int>("ThreadTopicID")
@@ -268,6 +272,9 @@ namespace GameForge.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTopicID"));
 
                     b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastEditTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("LatestReplyID")
@@ -310,6 +317,9 @@ namespace GameForge.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ThreadTopicReplyID"));
 
                     b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastEditTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Message")
