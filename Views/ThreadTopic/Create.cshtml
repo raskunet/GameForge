@@ -8,47 +8,54 @@
 
 <h4 class="text-secondary">Start a Discussion</h4>
 <hr />
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg border-0">
-            <div class="card-body p-4">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+@if (Model.CanCreate)
+{
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                    <!-- Thread Title -->
-                    <div class="form-group mb-3">
-                        <label asp-for="Title" class="form-label fw-bold text-primary"></label>
-                        <input asp-for="Title" class="form-control border-primary shadow-sm" placeholder="Enter thread title..." />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
+                        <!-- Thread Title -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label fw-bold text-primary"></label>
+                            <input asp-for="Title" class="form-control border-primary shadow-sm" placeholder="Enter thread title..." />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
 
-                    <!-- Thread Message -->
-                    <div class="form-group mb-3">
-                        <label asp-for="Message" class="form-label fw-bold text-primary"></label>
-                        <textarea asp-for="Message" class="form-control border-primary shadow-sm" rows="5" placeholder="Write your message here..." style="resize: vertical;"></textarea>
-                        <span asp-validation-for="Message" class="text-danger"></span>
-                    </div>
+                        <!-- Thread Message -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Message" class="form-label fw-bold text-primary"></label>
+                            <textarea asp-for="Message" class="form-control border-primary shadow-sm" rows="5" placeholder="Write your message here..." style="resize: vertical;"></textarea>
+                            <span asp-validation-for="Message" class="text-danger"></span>
+                        </div>
 
-                    <!-- Thread Tag -->
-                    <div class="form-group mb-3">
-                        <label asp-for="Tag" class="form-label fw-bold text-primary"></label>
-                        <select asp-for="Tag" class="form-select border-primary shadow-sm" asp-items="Model.SelectTags">
-                        </select>
-                        <span asp-validation-for="Tag" class="text-danger"></span>
-                    </div>
+                        <!-- Thread Tag -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Tag" class="form-label fw-bold text-primary"></label>
+                            <select asp-for="Tag" class="form-select border-primary shadow-sm" asp-items="Model.SelectTags">
+                            </select>
+                            <span asp-validation-for="Tag" class="text-danger"></span>
+                        </div>
 
-                    <!-- Submit Button -->
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg shadow-sm" id="submitBtn">
-                            <span class="spinner-border spinner-border-sm me-2 d-none" id="loadingSpinner"></span>
-                            Create Thread
-                        </button>
-                    </div>
-                </form>
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm" id="submitBtn">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="loadingSpinner"></span>
+                                Create Thread
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}else{
+    <div>
+        <p>you can't cretae a new thread rn :/</p>
+    </div>
+}
 
 <!-- Back to List Link -->
 <div class="text-center mt-3">

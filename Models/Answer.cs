@@ -24,6 +24,7 @@ public class AnswerCreateViewModel
     public string AnswerText { get; set; } = null!;
     [HiddenInput(DisplayValue =false)]
     public int QuestionID{ get; set; }
+    public bool CanCreate { get; set; } = true;
 }
 
 [NotMapped]
@@ -41,4 +42,5 @@ public class AnswerEditViewModel
 
     public required int UserID{ get; set; }
     public required string AnswerText{ get; set; }
+    public bool CanEdit { get; set; } = true;
 }

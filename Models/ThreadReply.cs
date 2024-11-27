@@ -18,6 +18,7 @@ public class ThreadTopicReply
     public string Message { get; set; } = string.Empty;
     public int UserID { get; set; }
     public DateTime CreationDate { get; set; }
+    public DateTime LastEditTime{ get; set; }
     public required ThreadTopic ThreadTopic { get; set; }
     public required User User { get; set; }
     /*
@@ -33,6 +34,7 @@ public class ThreadReplyCreateViewModel
     public string ThreadTopicReplyText { get; set; } = null!;
     public int? ParentReplyID { get; set; }
     public int ThreadTopicID { get; set; }
+    public bool CanCreate { get; set; } = true;
 }
 
 [NotMapped]
@@ -43,4 +45,5 @@ public class ThreadReplyEditViewModel
     //public  int UserID{ get; set; }
     //public  int? ParentReplyID{ get; set; }
     public required string ThreadTopicReplyText{ get; set; }
+    public bool CanEdit { get; set; } = true;
 }

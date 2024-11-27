@@ -56,9 +56,19 @@ namespace GameForge.Controllers
         }
 
         // GET: Question/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var QuestionCreate = new QuestionCreateViewModel();
+            var LatestQuestion = await _context.Question.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.AuthorID == 1);
+            if (LatestQuestion != null)
+            {
+                var timeSpan = DateTime.UtcNow - LatestQuestion.CreationDate;
+                if (timeSpan.TotalMinutes > 1)
+                {
+                    QuestionCreate.CanCreate = false;
+                }
+            }
+
             return View(QuestionCreate);
         }
 
@@ -86,10 +96,10 @@ namespace GameForge.Controllers
                     Downvotes = 0,
                     NumberOfAnswers = 0,
                     LatestAnswerID = 0,
-                    CreationDate = DateTime.UtcNow
+                    CreationDate = DateTime.UtcNow,
+                    LastEditTime = DateTime.UtcNow
                 };
                 _context.Add(question);
-                Console.WriteLine(question);
                 await _context.SaveChangesAsync();
                 var LatestQuestionID = question.QuestionID;
                 return RedirectToAction("Details", new { id = LatestQuestionID });
@@ -105,7 +115,21 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
-            var questionEditViewModel = new QuestionEditViewModel { QuestionID = question.QuestionID, QuestionText = question.QuestionText, Title = question.Title };
+            var questionEditViewModel = new QuestionEditViewModel
+            {
+                QuestionID = question.QuestionID,
+                QuestionText = question.QuestionText,
+                Title = question.Title
+            };
+            var LatestEditQuestion = await _context.Question.FirstOrDefaultAsync(m => m.AuthorID == 1 && m.QuestionID == id);
+            if (LatestEditQuestion != null)
+            {
+                var timeS = DateTime.UtcNow - LatestEditQuestion.LastEditTime;
+                if (timeS.TotalMinutes > 1)
+                {
+                    questionEditViewModel.CanEdit = false;
+                }
+            }
             return View(questionEditViewModel);
         }
 
@@ -128,6 +152,7 @@ namespace GameForge.Controllers
                     }
                     question.Title = questionEditViewModel.Title;
                     question.QuestionText = questionEditViewModel.QuestionText;
+                    question.LastEditTime = DateTime.UtcNow;
                     _context.Update(question);
                     await _context.SaveChangesAsync();
                 }
@@ -194,10 +219,6 @@ namespace GameForge.Controllers
         [HttpPost, ActionName("QuestionVote")]
         public async Task<IActionResult> QuestionVote([FromBody] QuestionVoteAction questionVoteAction)
         {
-            Console.WriteLine("Here in QuestionVote");
-            Console.WriteLine(questionVoteAction.QuestionID);
-            Console.WriteLine(questionVoteAction.Type);
-
             var userId = 1; //GetCurrentUserId();
             var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
             if (user == null)
@@ -228,9 +249,6 @@ namespace GameForge.Controllers
                     question.Downvotes += 1;
                 }
                 existingVote.IsUpvote = !existingVote.IsUpvote;
-
-                Console.WriteLine(question.Upvotes);
-                Console.WriteLine(question.Downvotes);
 
                 await _context.SaveChangesAsync();
 

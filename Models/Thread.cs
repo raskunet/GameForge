@@ -19,6 +19,7 @@ public class ThreadTopic
 
     [HiddenInput(DisplayValue = false)]
     public DateTime CreationDate { get; set; }
+    public DateTime LastEditTime{ get; set; }
     public string Message { get; set; } = string.Empty;
     public required List<string> Tag { get; set; }
     public int LatestReplyID { get; set; }
@@ -43,6 +44,7 @@ public class ThreadCreateViewModel
     public string Message { get; set; } = null!;
     public List<string> Tag { get; set; } = null!;
     public SelectList? SelectTags { get; set; }
+    public bool CanCreate { get; set; } = true;
 }
 
 [NotMapped]
@@ -53,6 +55,7 @@ public class ThreadEditViewModel
     public required string Message { get; set; }
     public required List<string> Tag { get; set; }
     public SelectList? SelectTags { get; set; }
+    public bool CanEdit { get; set; } = true;
 
 }
 

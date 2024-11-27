@@ -46,36 +46,40 @@
 
 <h1>Create a New Question</h1>
 <hr />
+@if (!Model.CanCreate)
+{
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Ask a Question</h4>
 
-<div class="row justify-content-center mt-4">
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Ask a Question</h4>
+                    <form asp-action="Create">
+                        <!-- Title Input with Tooltip -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter a concise title for your question"/>
+                        </div>
 
-                <form asp-action="Create">
-                    <!-- Title Input with Tooltip -->
-                    <div class="form-group mb-3">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter a concise title for your question"/>
-                    </div>
+                        <!-- Question Textarea with Character Counter -->
+                        <div class="form-group mb-3">
+                            <label asp-for="QuestionText" class="control-label"></label>
+                            <textarea asp-for="QuestionText" class="form-control" rows="10" cols="50" id="questionText"></textarea>
+                            <small class="text-muted" id="charCount">0/500 characters</small>
+                        </div>
 
-                    <!-- Question Textarea with Character Counter -->
-                    <div class="form-group mb-3">
-                        <label asp-for="QuestionText" class="control-label"></label>
-                        <textarea asp-for="QuestionText" class="form-control" rows="10" cols="50" id="questionText"></textarea>
-                        <small class="text-muted" id="charCount">0/500 characters</small>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="form-group mt-4">
-                        <input type="submit" value="Create" class="btn btn-primary w-100" />
-                    </div>
-                </form>
+                        <!-- Submit Button -->
+                        <div class="form-group mt-4">
+                            <input type="submit" value="Create" class="btn btn-primary w-100" />
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}else{
+    <p>you can't Create a Question rn :/ </p>
+}
 
 <div class="text-center mt-4">
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>

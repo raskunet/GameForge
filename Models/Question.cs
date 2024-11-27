@@ -13,6 +13,7 @@ public class Question
     public int AuthorID { get; set; }
     public string Title { get; set; } = string.Empty;
     public DateTime CreationDate { get; set; }
+    public DateTime LastEditTime{get;set;}
     public string QuestionText { get; set; } = string.Empty;
     public int Upvotes { get; set; }
     public int Downvotes { get; set; }
@@ -41,15 +42,17 @@ public class QuestionCreateViewModel
 {
     public string Title { get; set; } = null!;
     public string QuestionText { get; set; } = null!;
+    public bool CanCreate { get; set; } = true;
 
 }
 
 [NotMapped]
 public class QuestionEditViewModel
 {
-    public required int QuestionID{ get; set; }
+    public required int QuestionID { get; set; }
     public string Title { get; set; } = string.Empty;
     public string QuestionText { get; set; } = null!;
+    public bool CanEdit { get; set; } = true;
 }
 
 [NotMapped]

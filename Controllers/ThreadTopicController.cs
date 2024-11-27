@@ -48,18 +48,18 @@ namespace GameForge.Controllers
             var threadSearchviewModel = new ThreadSearchViewModel
             {
                 Tags = new SelectList(await tagQuery.ToListAsync()),
-                ThreadTopics = new (await threadTopics.ToListAsync())
+                ThreadTopics = new(await threadTopics.ToListAsync())
             };
-            
+
             return View(threadSearchviewModel);
         }
 
         // GET: ThreadTopic/Details/5
-        public async Task<IActionResult> Details(int  id)
+        public async Task<IActionResult> Details(int id)
         {
             var threadTopic = await _context.ThreadTopic
                 .Include(t => t.User)
-                .Include(t=>t.ThreadTopidcReplies)
+                .Include(t => t.ThreadTopidcReplies)
                 .FirstOrDefaultAsync(m => m.ThreadTopicID == id);
             if (threadTopic == null)
             {
@@ -79,6 +79,16 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Create()
         {
             var threadTopicCreate = new ThreadCreateViewModel();
+            var lastThreadTopic = await _context.ThreadTopic.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == 1);
+            if (lastThreadTopic != null)
+            {
+                var timeSpan = DateTime.UtcNow - lastThreadTopic.CreationDate;
+                if (timeSpan.TotalMinutes < 1)
+                {
+                    // If one minute has passed since the user last created a thread, we now allow the user to create a new thread.
+                    threadTopicCreate.CanCreate = false;
+                }
+            }
             var tags = await _context.ThreadTags.ToListAsync();
             threadTopicCreate.SelectTags = new SelectList(tags.Select(l => l.TagName).ToList());
             return View(threadTopicCreate);
@@ -104,6 +114,7 @@ namespace GameForge.Controllers
                     Title = threadCreateViewModel.Title,
                     Message = threadCreateViewModel.Message,
                     CreationDate = DateTime.UtcNow,
+                    LastEditTime = DateTime.UtcNow,
                     Tag = threadCreateViewModel.Tag
                 };
                 _context.Add(thread);
@@ -129,8 +140,16 @@ namespace GameForge.Controllers
                 Tag = threadTopic.Tag,
                 SelectTags = new SelectList((await _context.ThreadTags.ToListAsync()).Select(l => l.TagName).ToList())
             };
+            var latestThreadTopicEdit = await _context.ThreadTopic.OrderByDescending(m => m.LastEditTime).FirstOrDefaultAsync(m => m.ThreadTopicID == id);
+            if (latestThreadTopicEdit != null)
+            {
+                var timeSpan = DateTime.UtcNow - latestThreadTopicEdit.LastEditTime;
+                if (timeSpan.TotalMinutes < 1)
+                {
+                    threadEditViewModel.CanEdit = false;
+                }
+            }
             return View(threadEditViewModel);
-
         }
 
         // POST: ThreadTopic/Edit/5
@@ -152,6 +171,7 @@ namespace GameForge.Controllers
                     threadTopic.Message = threadEditViewModel.Message;
                     threadTopic.Title = threadEditViewModel.Title;
                     threadTopic.Tag = threadEditViewModel.Tag;
+                    threadTopic.LastEditTime = DateTime.UtcNow;
                     _context.Update(threadTopic);
                     await _context.SaveChangesAsync();
                 }

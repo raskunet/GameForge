@@ -51,51 +51,58 @@
 }
 
 <div class="container mt-5">
-    <h1 class="text-primary mb-4">Edit Thread</h1>
+    @if (Model.CanEdit)
+    {
+        <h1 class="text-primary mb-4">Edit Thread</h1>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Edit Thread Details</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display: none;"></div>
-                <input type="hidden" asp-for="ThreadTopicID" />
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Edit Thread Details</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display: none;"></div>
+                    <input type="hidden" asp-for="ThreadTopicID" />
 
-                <!-- Title Field -->
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label text-primary fw-bold"></label>
-                    <input asp-for="Title" class="form-control" placeholder="Enter the thread title" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-
-                <!-- Message Field -->
-                <div class="mb-3">
-                    <label asp-for="Message" class="form-label text-primary fw-bold"></label>
-                    <textarea asp-for="Message" class="form-control" rows="4"
-                        placeholder="Write your thread message"></textarea>
-                    <span asp-validation-for="Message" class="text-danger"></span>
-                </div>
-
-                <!-- Tag Dropdown -->
-                <div class="mb-4">
-                    <label asp-for="Tag" class="form-label text-primary fw-bold"></label>
-                    <div class="custom-select-wrapper">
-                        <select asp-for="Tag" class="form-select form-select-lg " asp-items="Model.SelectTags">
-                        </select>
+                    <!-- Title Field -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label text-primary fw-bold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter the thread title" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Tag" class="text-danger"></span>
-                </div>
 
-                <!-- Submit Button -->
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-save"></i> Save Changes
-                    </button>
-                </div>
-            </form>
+                    <!-- Message Field -->
+                    <div class="mb-3">
+                        <label asp-for="Message" class="form-label text-primary fw-bold"></label>
+                        <textarea asp-for="Message" class="form-control" rows="4"
+                        placeholder="Write your thread message"></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+
+                    <!-- Tag Dropdown -->
+                    <div class="mb-4">
+                        <label asp-for="Tag" class="form-label text-primary fw-bold"></label>
+                        <div class="custom-select-wrapper">
+                            <select asp-for="Tag" class="form-select form-select-lg " asp-items="Model.SelectTags">
+                            </select>
+                        </div>
+                        <span asp-validation-for="Tag" class="text-danger"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    }else{
+        <div>
+            <p>you can't edit the thread rn :/</p>
+        </div>
+    }
 
     <div class="text-center mt-4">
         <a asp-action="Index" class="btn btn-secondary">

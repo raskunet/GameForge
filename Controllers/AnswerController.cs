@@ -48,9 +48,14 @@ namespace GameForge.Controllers
 
         // GET: Answer/Create/QuestionID
         [HttpGet]
-        public IActionResult Create(int QuestionID)
+        public async Task<IActionResult> Create(int QuestionID)
         {
-            var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID };
+            var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID, CanCreate = false };
+            var latestAnswer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == 1);
+            if (latestAnswer != null)
+            {
+                return Problem("You already Answered. Nigger");
+            }
             return View(AnswerCreate);
         }
 
@@ -76,6 +81,7 @@ namespace GameForge.Controllers
                     Question = question,
                     User = user,
                     CreationDate = DateTime.UtcNow,
+                    LastEditTime=DateTime.UtcNow,
                     Upvotes = 0,
                     Downvotes = 0,
                     AnswerText = answerDat.AnswerText
@@ -97,6 +103,11 @@ namespace GameForge.Controllers
                 return NotFound();
             }
             var answerEditViewModel = new AnswerEditViewModel { QuestionID = QuestionID, UserID = UserID, AnswerText = answer.AnswerText };
+            var timeSpan = DateTime.UtcNow - answer.LastEditTime;
+            if (timeSpan.TotalMinutes > 1)
+            {
+                answerEditViewModel.CanEdit = false;
+            }
             return View(answerEditViewModel);
         }
 
