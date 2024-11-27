@@ -11,14 +11,14 @@ namespace GameForge
         {
             var root = Directory.GetCurrentDirectory();
             var dotenv = Path.Combine(root, ".env");
-            DotEnv.PGSQLConnStringLoad(dotenv,"POSTGRES");
+            DotEnv.PGSQLConnStringLoad(dotenv, "POSTGRES");
 
             Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRES"));
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<GameForgeContext>(options =>
                 options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES")));
-            
-            
+
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -45,11 +45,6 @@ namespace GameForge
             app.UseRouting();
 
             app.UseAuthorization();
-
-            //app.Map("/Question/Create", FormatTextMiddleWareExt.UseFormatText);
-            // TODO : Make a custom MiddleWare Class for handling this 
-            //app.UseWhen(context => context.Request.Path.StartsWithSegments("/Question/Create", StringComparison.OrdinalIgnoreCase), appBuild=>appBuild.UseMiddleware<FormatTextMiddleWare>());
-
 
             app.MapControllerRoute(
                 name: "default",

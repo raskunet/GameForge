@@ -66,7 +66,7 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.User.FirstOrDefaultAsync(m => m.ID == 1);
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
                 if (user == null)
                 {
                     return NotFound();

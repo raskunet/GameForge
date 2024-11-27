@@ -58,3 +58,10 @@ public class QuestionVoteAction
     public int QuestionID{ get; set; }
     public bool Type{ get; set; }
 }
+
+[NotMapped]
+public class QuestionSearchViewModel
+{
+    public List<Question>? Questions{ get; set; }
+    public string? QuestionSearchString{ get; set; }
+}
