@@ -64,7 +64,7 @@ namespace GameForge.Models
         public decimal PriceAfterDiscount => IsPaid ? Price * (1 - DiscountPercentage / 100) : 0;
 
         // Define a discount percentage (e.g., 0 if no discount)
-        
+         public ICollection<Library>? Libraries { get; set; }
 
 
     }

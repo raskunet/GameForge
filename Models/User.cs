@@ -31,5 +31,4 @@ public class User
     public ICollection<Answer> Answers { get; } = new List<Answer>();
     public ICollection<QuestionVote> QuestionVotes { get; } = new List<QuestionVote>();
     public ICollection<AnswerVote> AnswerVotes{ get; } = new List<AnswerVote>();
-    public ICollection<Game> DownloadedGames { get; } = new List<Game>();
 }

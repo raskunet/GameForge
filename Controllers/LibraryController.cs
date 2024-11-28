@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GameForge.Data;
 using GameForge.Models;
+using GameForge.Data;
 
 namespace GameForge.Controllers
 {
@@ -20,32 +14,25 @@ namespace GameForge.Controllers
             _context = context;
         }
 
-        // GET: Library/[Action]
-        [HttpGet("{id}")]
-        public  ActionResult Index(int id=1)
+        // GET: Library/UserGames/5
+        public async Task<IActionResult> Index(int userId=1)
         {
-            // var library = await _context.Library
-            //     .Include(l => l.DownloadedGames)
-            //     .FirstOrDefaultAsync(l => l.UserID == 1);
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid user ID.");
+            }
 
-            // if (library == null)
-            //     return NotFound($"Library with ID {id} not found.");
+            var userGames = await _context.Libraries
+                .Include(l => l.game) // Include related game details
+                .Where(l => l.UserID == userId)
+                .ToListAsync();
 
-            return View();
-        
+            if (userGames == null || !userGames.Any())
+            {
+                return NotFound($"No games found for user ID: {userId}");
+            }
+
+            return View(userGames);
         }
-        //POST: Library/Details
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Details([FromBody] Game game)
-        // {
-        //     if (game == null)
-        //         return BadRequest("Game data is required.");
-
-        //     _context.Game.Add(game);
-        //     await _context.SaveChangesAsync();
-        //     return View();
-        // }
-        
     }
 }

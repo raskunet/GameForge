@@ -44,8 +44,6 @@ namespace GameForge.Data
             modelBuilder.Entity<Wishlist>()
                 .HasKey(e => new { e.WishlistID, e.UserID });
             
-            modelBuilder.Entity<Game>()
-                .HasKey(e => new { e.GameID, e.UserID });
 
         }
 
@@ -57,7 +55,6 @@ namespace GameForge.Data
         public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
         public DbSet<QuestionVote> QuestionVotes{ get; set; } = default!;
         public DbSet<ThreadTag> ThreadTags { get; set; } = default!;
-        public DbSet<Game> Game { get; set; } = default!;
         public DbSet<Review> Review { get; set; }
         public DbSet<Purchase> Purchase { get; set; }
         public DbSet<Developer> Developers { get; set; }
@@ -66,8 +63,9 @@ namespace GameForge.Data
 
         public DbSet<Cart> Cart{ get; set; } = default!;
         public DbSet<Collectables> Collectables{ get; set; } = default!;
-        public DbSet<Library> Library{ get; set; } = default!;
+        public DbSet<Library> Libraries{ get; set; } = default!;
         public DbSet<Wishlist> Wishlist{ get; set; } = default!;
-        public DbSet<Game> Game{ get; set; } = default!;
+        
+        public DbSet<Game> Game { get; set; } = default!;
     }
 }

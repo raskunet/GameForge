@@ -166,6 +166,29 @@ namespace GameForge.Models
 
                 context.Review.AddRange(reviews);
                 context.SaveChanges();
+
+                var libraris = new[]
+                {
+                    new Library { LibraryID = 1,GameId = games[1].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
+                    new Library { LibraryID = 2,GameId = games[0].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
+                    new Library { LibraryID = 3,GameId = games[2].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow }
+                };
+
+                context.Libraries.AddRange(libraris);
+                context.SaveChanges();
+
+                var Carts = new[]
+                {
+                    new Cart { GameId = games[1].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false },
+                    new Cart { GameId = games[0].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false }
+                };
+
+                context.Cart.AddRange(Carts);
+                context.SaveChanges();
+
+                
+
+
             }
         }
     }

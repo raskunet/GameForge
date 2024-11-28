@@ -50,16 +50,6 @@
           "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "8.0.5"
         }
       },
-      "MongoDB.EntityFrameworkCore": {
-        "type": "Direct",
-        "requested": "[8.1.1, )",
-        "resolved": "8.1.1",
-        "contentHash": "ZbLgxKEK/FZYAc1bAoyNd6bZeU+DSn5rKzthLTXplCsWDzxEIvbn+eFp+6gHO9AyzotcNvPTr5rgu8wNAXosxg==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.7",
-          "MongoDB.Driver": "2.28.0"
-        }
-      },
       "Npgsql.EntityFrameworkCore.PostgreSQL": {
         "type": "Direct",
         "requested": "[8.0.8, )",

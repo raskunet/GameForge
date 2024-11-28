@@ -1,31 +1,21 @@
-@* @model GameForge.Models.Library *@
+@model IEnumerable<GameForge.Models.Library>
 
-@* @{
-    ViewData["Title"] = "Library - Downloaded Games";
-} *@
+<h2>Downloaded Games</h2>
 
-@* <h2>@Model.User - Downloaded Games</h2> *@
-
-<!-- Table to display games -->
-<table class="table table-bordered table-striped">
-    <p>Okay</p>
-    @* <thead>
+<table class="table">
+    <thead>
         <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Purchase Date</th>
-            <th>Price</th>
+            <th>Game Name</th>
+            <th>Download Date</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var game in Model.DownloadedGames)
+        @foreach (var library in Model)
         {
             <tr>
-                <td>@game.GameName</td>
-                <td>@game.Category</td>
-                <td>@game.ReleaseDate.ToString("yyyy-MM-dd")</td>
-                <td>@game.Price.ToString("C")</td>
+                <td>@library.game?.Title</td>
+                <td>@library.LibraryCreationDate.ToString("g")</td>
             </tr>
         }
-    </tbody> *@
+    </tbody>
 </table>

@@ -5,7 +5,7 @@
 namespace GameForge.Migrations
 {
     /// <inheritdoc />
-    public partial class New_Primary_KEY_4 : Migration
+    public partial class New3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

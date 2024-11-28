@@ -9,12 +9,7 @@ public class Collectables
 {
     public int CollectableID { get; set; } // Unique identifier for the collection
     public int UserID { get; set; } // ID of the user who owns the collectables
-    public List<Game> CollectableItems { get; set; } = new List<Game>(); // List of collected items
-    public int TotalCollectables 
-    {
-        get
-        {
-            return CollectableItems.Count * 100; // Total number of collectables
-        }
-    }
+    public int TotalCollectables {get;set;}=0;
+    public int LibraryID{get;set;}
+    public Library? library{get;set;}
 }
