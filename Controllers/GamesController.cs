@@ -27,8 +27,8 @@ namespace GameForge.Controllers
 
             // Use LINQ to get list of categories.
             IQueryable<string> categoryQuery = from g in _context.Game
-                                            orderby g.Category
-                                            select g.Category;
+                                               orderby g.Category
+                                               select g.Category;
 
             var games = from g in _context.Game
                         select g;
@@ -56,7 +56,7 @@ namespace GameForge.Controllers
         }
 
         // GET: Games/Details/5
-       public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -80,5 +80,9 @@ namespace GameForge.Controllers
         {
             return _context.Game.Any(e => e.Id == id);
         }
+
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public Task<IActionResult> AddProblem()
     }
 }

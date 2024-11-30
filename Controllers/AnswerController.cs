@@ -54,7 +54,7 @@ namespace GameForge.Controllers
             var latestAnswer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == 1);
             if (latestAnswer != null)
             {
-                return Problem("You already Answered. Nigger");
+                return Problem("You already Answered.");
             }
             return View(AnswerCreate);
         }
@@ -88,6 +88,7 @@ namespace GameForge.Controllers
                 };
                 question.NumberOfAnswers += 1;
                 _context.Add(answer);
+                _context.Update(question);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Question", new { id = question.QuestionID });
             }

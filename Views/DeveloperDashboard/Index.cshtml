@@ -13,7 +13,7 @@
 
 <h2>Developer Dashboard</h2>
 
-<p>Manage your games below. You can edit prices, apply discounts, and toggle the game’s paid/free status.</p>
+<p>Manage your games below. You can edit prices, apply discounts, and toggle the game's paid/free status.</p>
 
 <table class="table table-striped table-bordered">
     <thead>
@@ -55,7 +55,7 @@
                     </form>
                 </td>
                 <td>
-                    <div class="btn-group" role="group">
+                    <div class="btn-group grid gap-1" role="group">
                         <!-- Edit button -->
                         <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-warning">Edit</a>
 
@@ -63,6 +63,8 @@
                         <form asp-action="Delete" asp-route-id="@game.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this game?');" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
+                        <!-- for Developer to view issues of a game -->
+                        @Html.ActionLink("View Reported Issues","Index","GameProblem",new {GameID=game.Id},new {@class="btn btn-secondary btn-sm"})
                     </div>
                 </td>
             </tr>

@@ -1,0 +1,78 @@
+@model GameForge.Models.GameProblem
+
+<div class="container mt-5">
+    <!-- Title Section -->
+    <div class="text-left">
+        <h1 class="fw-bold text-primary">@Model.Title</h1>
+        <hr class="w-50 mx-auto" style="height: 2px; background-color: #007bff;" />
+    </div>
+
+    <!-- Problem Description Section -->
+    <div class="card shadow-lg mt-4">
+        <div class="card-body">
+            <h4 class="card-title text-dark">Problem Description</h4>
+            <p class="fs-5">@Html.DisplayFor(model => model.ProblemDescription)</p>
+        </div>
+        <div class="card-footer bg-light text-end">
+            <small class="text-muted">
+                Reported by <strong>@Model.User.Username</strong>
+            </small>
+        </div>
+    </div>
+
+    <!-- Game Information Section -->
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="p-3 border rounded bg-light">
+                    <h5 class="fw-bold text-secondary">Game Category</h5>
+                    <p class="fs-6">@Html.DisplayFor(model => model.Game.Category)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons Section -->
+    <div class="mt-5 d-flex justify-content-between align-items-center">
+        <div>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+
+        <div>
+            <a href="mailto:@Model?.User.Email?subject=Regarding the issue: @Model?.Title" class="btn btn-primary"
+                title="Email User">
+                <i class="bi bi-envelope"></i> Email User
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Center title section styling */
+        h1 {
+            font-size: 2.5rem;
+            text-transform: capitalize;
+            letter-spacing: 1px;
+        }
+
+        /* Problem card styling */
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-footer {
+            font-size: 0.9rem;
+        }
+        .btn {
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+}

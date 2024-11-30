@@ -139,5 +139,16 @@ namespace GameForge.Controllers
         {
             return _context.Game.Any(e => e.Id == id);
         }
+
+        // [HttpGet, ActionName("Problem")]
+        // public async Task<IActionResult> ViewProblems(int GameID)
+        // {
+        //     var gameList = await _context.GameProblems.FirstOrDefaultAsync(m => m.GameID == GameID);
+        //     if (gameList == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return View(gameList);
+        // }
     }
 }

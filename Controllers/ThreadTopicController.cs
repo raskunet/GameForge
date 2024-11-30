@@ -33,7 +33,8 @@ namespace GameForge.Controllers
 
 
             var threadTopics = from m in _context.ThreadTopic
-                               select m;
+                                select m;
+            
 
             if (!string.IsNullOrEmpty(ThreadSearchString))
             {

@@ -95,9 +95,11 @@ namespace GameForge.Controllers
                     ThreadTopic = threadTopic,
                     ParentReply = parentReply,
                 };
+                threadTopic.NumberOfReplies += 1;
                 _context.Add(threadReply);
+                _context.Update(threadTopic);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","ThreadTopic",new {id=threadReplyCreateViewModel.ThreadTopicID});
             }
             return View(threadReplyCreateViewModel);
         }

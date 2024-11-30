@@ -1,0 +1,41 @@
+@model IEnumerable<GameForge.Models.GameProblem>
+
+
+
+<div class="container mt-4">
+    @if(Model.Any()){
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Title)</th>
+                    <th>@Html.DisplayNameFor(model => model.CreationDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.User.Username)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+                <tbody>
+                    @foreach (var item in Model!)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                            <td>@item.CreationDate.ToString("MMM, dd yyyy") </td>
+                            <td>@Html.DisplayFor(modelItem => item.User.Username)</td>
+                            <td>@Html.ActionLink("Details","Details","GameProblem",new {GameProblemID=item.GameProblemID},new {@class="btn btn-secondary"}) </td>
+                        </tr>
+                    }
+
+                </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Nothing to see here </p>
+    }
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
