@@ -4,6 +4,7 @@ using GameForge.Data;
 using GameForge.Models;
 using Markdig;
 using Microsoft.AspNetCore.Identity;
+using Mono.TextTemplating;
 namespace GameForge.Controllers
 {
     public class QuestionController : Controller
@@ -26,50 +27,52 @@ namespace GameForge.Controllers
             return user.Id;
         }
         // GET: Question
-        public async Task<IActionResult> Index(string QuestionSearchString,string sortOrder)
+        public async Task<IActionResult> Index(string QuestionSearchString, string sortOrder, string currentFilter, int? pageNumber)
         {
             if (_context.Question == null)
             {
                 return Problem("Entity Set `GameForge.Models.Question` is null");
             }
-
+            ViewData["CurrentSort"] = sortOrder;
             ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
             //ViewData["VoteSortParam"] = sortOrder == "up" ? "down" : "up";
             ViewData["NumAnswerSortParam"] = sortOrder == "more" ? "less" : "more";
 
+
+            if (QuestionSearchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                QuestionSearchString = currentFilter;
+            }
+            @ViewData["CurrentFilter"] = QuestionSearchString;
+
             var questions = from q in _context.Question
                             select q;
-            if(!string.IsNullOrEmpty(QuestionSearchString)){
-                questions = questions.Where(w => w.Title.ToUpper().Contains(QuestionSearchString.ToUpper(),StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(QuestionSearchString))
+            {
+                questions = questions.Where(w => w.Title.ToUpper().Contains(QuestionSearchString.ToUpper()));
             }
 
-            switch(sortOrder){
-                case "date_asc":
-                    questions = questions.OrderBy(m => m.CreationDate);
-                    break;
-                case "date_desc":
-                    questions = questions.OrderByDescending(m => m.CreationDate);
-                    break;
-                case "more":
-                    questions = questions.OrderBy(m => m.NumberOfAnswers);
-                    break;
-                case "less":
-                    questions = questions.OrderByDescending(m => m.NumberOfAnswers);
-                    break;
-                default:
-                    questions = questions.OrderBy(m => m.Title);
-                    break;
-            }
-            return View(await questions.AsNoTracking().ToListAsync());
+            questions = sortOrder switch
+            {
+                "date_asc" => questions.OrderBy(m => m.CreationDate),
+                "date_desc" => questions.OrderByDescending(m => m.CreationDate),
+                "more" => questions.OrderBy(m => m.NumberOfAnswers),
+                "less" => questions.OrderByDescending(m => m.NumberOfAnswers),
+                _ => questions.OrderBy(m => m.Title),
+            };
+            int pageSize = 3;
+
+            return View(await PaginatedList<Question>.CreateAsync(questions.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Question/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             var userID = await GetCurrentUserIdAsync();
             var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
             var answerFlag = false;
@@ -102,7 +105,7 @@ namespace GameForge.Controllers
             if (LatestQuestion != null)
             {
                 var timeSpan = DateTime.UtcNow - LatestQuestion.CreationDate;
-                if (timeSpan.TotalMinutes > 1)
+                if (timeSpan.TotalMinutes < 1)
                 {
                     QuestionCreate.CanCreate = false;
                 }

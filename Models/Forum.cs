@@ -7,7 +7,7 @@ namespace GameForge.Models;
 [NotMapped]
 public class Forum
 {
-    public required List<ThreadTopic> ThreadTopicsFilter { get; set; }
-    public required List<Question> FilterQuestionFilter { get; set; }
+    public required PaginatedList<ThreadTopic> ThreadTopics { get; set; }
+    public required PaginatedList<Question> Questions { get; set; }
 }
 

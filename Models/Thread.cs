@@ -62,7 +62,7 @@ public class ThreadEditViewModel
 [NotMapped]
 public class ThreadSearchViewModel
 {
-    public List<ThreadTopic>? ThreadTopics { get; set; }
+    public PaginatedList<ThreadTopic>? ThreadTopics { get; set; }
     public SelectList? Tags { get; set; }
     public string? ThreadTag { get; set; }
     public string? ThreadSearchString { get; set; }

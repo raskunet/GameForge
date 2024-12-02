@@ -39,14 +39,14 @@ namespace GameForge
 
 
 
-            // builder.Services.AddAuthentication(options =>
-            // {
-            //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            // }).AddCookie(options =>
-            // {
-            //     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-            //     options.Cookie.MaxAge = options.ExpireTimeSpan;
-            // });
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.Cookie.MaxAge = options.ExpireTimeSpan;
+            });
 
 
 

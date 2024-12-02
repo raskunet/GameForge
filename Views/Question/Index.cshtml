@@ -1,61 +1,111 @@
-@model IEnumerable<GameForge.Models.Question>
+@model PaginatedList<GameForge.Models.Question>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Questions Index";
 }
 
-<h1>Index</h1>
+<h1 class="text-center text-primary mb-4">Questions</h1>
+<hr class="mb-4" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Create New Button -->
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Create New
+        </a>
 
-<form asp-controller="Question" asp-action="Index" method="get">
-    <p>
-        <label>Title: <input type="text" name="QuestionSearchString" /></label>
-        <input type="submit" value="Filter" />
-    </p>
-</form>
+        <!-- Search Form -->
+        <form asp-controller="Question" asp-action="Index" method="get" class="d-flex align-items-center">
+            <input type="text" name="QuestionSearchString" class="form-control me-2" placeholder="Search by title" />
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Filter
+            </button>
+        </form>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreationDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Upvotes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberOfAnswers)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Upvotes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfAnswers)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.QuestionID }) |
-                @Html.ActionLink("Details", "Details", new { id=item.QuestionID  }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.QuestionID })
-            </td>
-        </tr>
+    <!-- Questions Table -->
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]"
+                        asp-route-currentFilter="@ViewData["CurrentFilter"]" class="text-light">
+                        Creation Date
+                        <i class="bi bi-arrow-up-down"></i>
+                    </a>
+                </th>
+                <th>Upvotes</th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NumAnswerSortParam"]"
+                        asp-route-currentFilter="@ViewData["CurrentFilter"]" class="text-light">
+                        Number of Answers
+                        <i class="bi bi-arrow-up-down"></i>
+                    </a>
+                </th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Upvotes)</td>
+                    <td>@Html.DisplayFor(modelItem => item.NumberOfAnswers)</td>
+                    <td class="text-center">
+                        <a asp-action="Details" asp-route-id="@item.QuestionID" class="btn btn-info btn-sm me-1">
+                            <i class="bi bi-info-circle"></i> Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]"
+            asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]"
+            class="btn btn-secondary @(!Model.HasPreviousPage ? "disabled" : "")">
+            <i class="bi bi-arrow-left"></i> Previous
+        </a>
+
+        <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]"
+            asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-currentFilter="@ViewData["CurrentFilter"]"
+            class="btn btn-secondary @(!Model.HasNextPage ? "disabled" : "")">
+            Next <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Page title styles */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Table styles */
+        table {
+            border-radius: 5px;
+        }
+
+        thead th {
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        /* Button hover effects */
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
 }
-    </tbody>
-</table>

@@ -28,16 +28,31 @@ namespace GameForge.Controllers
             return user.Id;
         }
         // GET: ThreadTopic
-        public async Task<IActionResult> Index(string ThreadTag, string ThreadSearchString)
+        public async Task<IActionResult> Index(string ThreadTag, string ThreadSearchString, string currentFilter, string sortOrder, int? pageNumber, string currentTag)
         {
             if (_context.ThreadTopic == null)
             {
                 return Problem("Entity set 'MvcMovieContext.Movie'  is null.");
             }
 
-
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+            //ViewData["VoteSortParam"] = sortOrder == "up" ? "down" : "up";
+            ViewData["NumRepliesSortParam"] = sortOrder == "more" ? "less" : "more";
             IQueryable<string> tagQuery = from t in _context.ThreadTags select t.TagName;
 
+            if (ThreadSearchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                ThreadSearchString = currentFilter;
+                ThreadTag = currentTag;
+            }
+
+            ViewData["CurrentFilter"] = ThreadSearchString;
+            ViewData["CurrentTag"] = ThreadTag;
 
             var threadTopics = from m in _context.ThreadTopic
                                select m;
@@ -53,13 +68,28 @@ namespace GameForge.Controllers
                 threadTopics = threadTopics.Where(x => x.Tag.Contains(ThreadTag));
             }
 
+            threadTopics = sortOrder switch
+            {
+                "date_asc" => threadTopics.OrderBy(m => m.CreationDate),
+                "date_desc" => threadTopics.OrderByDescending(m => m.CreationDate),
+                "more" => threadTopics.OrderBy(m => m.NumberOfReplies),
+                "less" => threadTopics.OrderByDescending(m => m.NumberOfReplies),
+                _ => threadTopics.OrderBy(m => m.Title),
+            };
+
+            int pageSize = 3;
+
             var threadSearchviewModel = new ThreadSearchViewModel
             {
                 Tags = new SelectList(await tagQuery.ToListAsync()),
-                ThreadTopics = new(await threadTopics.ToListAsync())
+                ThreadTopics = await PaginatedList<ThreadTopic>.CreateAsync(threadTopics, pageNumber ?? 1, pageSize)
             };
-
             return View(threadSearchviewModel);
+        }
+
+        private object PaginatedList(Task<List<ThreadTopic>> task)
+        {
+            throw new NotImplementedException();
         }
 
         // GET: ThreadTopic/Details/5
