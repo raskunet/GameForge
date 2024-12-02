@@ -134,7 +134,7 @@
 //                 context.Game.AddRange(games);
 //                 context.SaveChanges();
 
-                
+
 
 //                 context.User.AddRange(playerOne, playerTwo);
 //                 context.SaveChanges();
@@ -143,7 +143,7 @@
 //                 {
 //                     new Purchase { GameId = games[0].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow },
 //                     new Purchase { GameId = games[1].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow },
-                    
+
 //                     new Purchase { GameId = games[0].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
 //                     new Purchase { GameId = games[1].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
 //                     new Purchase { GameId = games[2].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },

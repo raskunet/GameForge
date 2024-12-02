@@ -40,8 +40,8 @@ namespace GameForge.Controllers
 
 
             var threadTopics = from m in _context.ThreadTopic
-                                select m;
-            
+                               select m;
+
 
             if (!string.IsNullOrEmpty(ThreadSearchString))
             {
@@ -87,7 +87,7 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Create()
         {
             var threadTopicCreate = new ThreadCreateViewModel();
-            var userID=await GetCurrentUserIdAsync();
+            var userID = await GetCurrentUserIdAsync();
             var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
             var lastThreadTopic = await _context.ThreadTopic.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == userID);
             if (lastThreadTopic != null)
@@ -113,7 +113,7 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userID=await GetCurrentUserIdAsync();
+                var userID = await GetCurrentUserIdAsync();
                 var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                 if (user == null)
                 {

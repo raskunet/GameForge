@@ -5,7 +5,7 @@ namespace GameForge.Models;
 
 public class User : IdentityUser
 {
-    
+
 
     // public int Id { get; set; }
 
@@ -34,5 +34,5 @@ public class User : IdentityUser
     public ICollection<Question> Questions { get; } = new List<Question>();
     public ICollection<Answer> Answers { get; } = new List<Answer>();
     public ICollection<QuestionVote> QuestionVotes { get; } = new List<QuestionVote>();
-    public ICollection<AnswerVote> AnswerVotes{ get; } = new List<AnswerVote>();
+    public ICollection<AnswerVote> AnswerVotes { get; } = new List<AnswerVote>();
 }

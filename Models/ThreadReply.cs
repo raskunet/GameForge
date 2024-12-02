@@ -12,20 +12,20 @@ public class ThreadTopicReply
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ThreadTopicReplyID{get;set;}
-    public int? ParentReplyID{ get; set; }
+    public int ThreadTopicReplyID { get; set; }
+    public int? ParentReplyID { get; set; }
     public int ThreadTopicID { get; set; }
     public string Message { get; set; } = string.Empty;
     public int UserID { get; set; }
     public DateTime CreationDate { get; set; }
-    public DateTime LastEditTime{ get; set; }
+    public DateTime LastEditTime { get; set; }
     public required ThreadTopic ThreadTopic { get; set; }
     public required User User { get; set; }
     /*
         If A Reply is to a Main thread topic, below will be null
         Else it will reference the Reply to which it is is replying to something like reddit
     */
-    public ThreadTopicReply? ParentReply{ get; set; }
+    public ThreadTopicReply? ParentReply { get; set; }
 }
 
 [NotMapped]
@@ -41,9 +41,9 @@ public class ThreadReplyCreateViewModel
 public class ThreadReplyEditViewModel
 {
     public int ThreadTopicReplyID { get; set; }
-    public  int ThreadTopicID{ get; set; }
+    public int ThreadTopicID { get; set; }
     //public  int UserID{ get; set; }
     //public  int? ParentReplyID{ get; set; }
-    public required string ThreadTopicReplyText{ get; set; }
+    public required string ThreadTopicReplyText { get; set; }
     public bool CanEdit { get; set; } = true;
 }

@@ -77,10 +77,10 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                 var userId = await GetCurrentUserIdAsync();
+                var userId = await GetCurrentUserIdAsync();
                 var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
                 var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
-                
+
                 if (question == null || user == null)
                 {
                     return NotFound();
@@ -91,7 +91,7 @@ namespace GameForge.Controllers
                     Question = question,
                     User = user,
                     CreationDate = DateTime.UtcNow,
-                    LastEditTime=DateTime.UtcNow,
+                    LastEditTime = DateTime.UtcNow,
                     Upvotes = 0,
                     Downvotes = 0,
                     AnswerText = answerDat.AnswerText

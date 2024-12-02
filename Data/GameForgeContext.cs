@@ -14,7 +14,7 @@ namespace GameForge.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasKey(e=>e.Id);
+                .HasKey(e => e.Id);
             modelBuilder.Entity<ThreadTopic>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.ThreadTopics)
@@ -35,7 +35,7 @@ namespace GameForge.Data
 
             modelBuilder.Entity<AnswerVote>()
                 .HasKey(e => new { e.QuestionID, e.UserID });
-            
+
             base.OnModelCreating(modelBuilder);
 
         }

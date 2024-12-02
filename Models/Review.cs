@@ -9,7 +9,7 @@ namespace GameForge.Models
 
 
         [Required]
-        public string UserId { get; set; } 
+        public string UserId { get; set; }
 
         [Required]
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5 stars.")]

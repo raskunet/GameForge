@@ -1,5 +1,7 @@
-namespace GameForge.Services{
-    public abstract class FormatTextService{
+namespace GameForge.Services
+{
+    public abstract class FormatTextService
+    {
         public abstract void FormatText();
     }
 }

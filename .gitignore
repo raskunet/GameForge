@@ -246,3 +246,4 @@ MigrationBackup/
 
 # Environment Variabels file
 .env
+.sonarqube/

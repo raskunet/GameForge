@@ -14,7 +14,7 @@ public class GameProblem
     public int GameID { get; set; }
     public required string Title { get; set; }
     public required string ProblemDescription { get; set; }
-    public DateTime CreationDate{ get; set; }
+    public DateTime CreationDate { get; set; }
     public required User User { get; set; }
     public required Game Game { get; set; }
 }

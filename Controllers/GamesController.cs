@@ -33,15 +33,12 @@ namespace GameForge.Controllers
             {
                 return Problem("Entity set 'GameForgeContext.Game' is null.");
             }
-            var userId = await GetCurrentUserIdAsync();
-            if (userId == null) return Unauthorized();
-            
 
 
             // Use LINQ to get list of categories.
             IQueryable<string> categoryQuery = from g in _context.Game
-                                            orderby g.Category
-                                            select g.Category;
+                                               orderby g.Category
+                                               select g.Category;
 
             var games = from g in _context.Game
                         select g;
@@ -69,32 +66,32 @@ namespace GameForge.Controllers
         }
 
         // GET: Games/Details/5
-       public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
-        if (id == null)
-        {
-            return NotFound();
-        }
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        var game = await _context.Game
-            .Include(g => g.Reviews)  // Include the reviews for this game
-            .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game
+                .Include(g => g.Reviews)  // Include the reviews for this game
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (game == null)
-        {
-            return NotFound();
-        }
+            if (game == null)
+            {
+                return NotFound();
+            }
 
-        var userId = await GetCurrentUserIdAsync();
+            var userId = await GetCurrentUserIdAsync();
 
-        // Pass the logged-in user ID to the view
-        ViewData["CurrentUserId"] = userId;
+            // Pass the logged-in user ID to the view
+            ViewData["CurrentUserId"] = userId;
 
-        // Check if the user has purchased the game
-        bool hasPurchased = _context.Purchase.Any(p => p.GameId == id && p.UserId == userId);
-        ViewData["PurchaseCond"] = hasPurchased;
+            // Check if the user has purchased the game
+            bool hasPurchased = _context.Purchase.Any(p => p.GameId == id && p.UserId == userId);
+            ViewData["PurchaseCond"] = hasPurchased;
 
-        return View(game);
+            return View(game);
         }
 
 

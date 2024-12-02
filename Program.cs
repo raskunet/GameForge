@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using GameForge.Data;
 using GameForge.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace GameForge
 {
@@ -10,9 +11,9 @@ namespace GameForge
     {
         private static async Task Main(string[] args)
         {
-            
+
             var root = Directory.GetCurrentDirectory();
-            
+
             var dotenv = Path.Combine(root, ".env");
             if (!DotEnv.PGSQLConnStringLoad(dotenv, "POSTGRES"))
             {
@@ -25,7 +26,7 @@ namespace GameForge
             builder.Services.AddDbContext<GameForgeContext>(options =>
                 options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES")));
 
-            
+
             //builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<GameForgeContext>();
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -35,11 +36,25 @@ namespace GameForge
             .AddEntityFrameworkStores<GameForgeContext>()
             .AddDefaultUI() // This ensures the default UI is included
             .AddDefaultTokenProviders();
+
+
+
+            // builder.Services.AddAuthentication(options =>
+            // {
+            //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            // }).AddCookie(options =>
+            // {
+            //     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            //     options.Cookie.MaxAge = options.ExpireTimeSpan;
+            // });
+
+
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
 
-        var app = builder.Build();
+            var app = builder.Build();
 
             // Seed roles before running the app
             using (var scope = app.Services.CreateScope())
@@ -65,13 +80,13 @@ namespace GameForge
             app.UseRouting();
 
             // Ensure correct order of middleware
-            app.UseAuthentication(); 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages(); 
+            app.MapRazorPages();
 
             app.Run();
 
