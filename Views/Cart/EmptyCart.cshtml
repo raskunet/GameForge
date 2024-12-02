@@ -1,7 +1,13 @@
+@model GameForge.Models.Collectables
+
 @{
     ViewData["Title"] = "Empty Cart";
 }
-
+<h2>Shopping Cart
+    <div class="collectables-info">
+        <p><strong>Total Collectables :</strong> @Model.TotalCollectables</p>
+    </div>
+</h2>
 <div class="text-center">
     <h2>Your Cart is Empty</h2>
     <p>Your cart is currently empty. Start adding some games to your cart!</p>

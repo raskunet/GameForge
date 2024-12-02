@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    [Migration("20241201211027_New5")]
-    partial class New5
+    [Migration("20241202120028_New3")]
+    partial class New3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,10 +75,7 @@ namespace GameForge.Migrations
             modelBuilder.Entity("GameForge.Models.Cart", b =>
                 {
                     b.Property<int>("CartID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CartID"));
 
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
@@ -109,15 +106,10 @@ namespace GameForge.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("LibraryID")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TotalCollectables")
                         .HasColumnType("integer");
 
                     b.HasKey("CollectableID", "UserID");
-
-                    b.HasIndex("LibraryID");
 
                     b.ToTable("Collectables");
                 });
@@ -416,6 +408,32 @@ namespace GameForge.Migrations
                     b.ToTable("ThreadTopicReplies");
                 });
 
+            modelBuilder.Entity("GameForge.Models.Trending", b =>
+                {
+                    b.Property<int>("TrendId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TrendId"));
+
+                    b.Property<int>("GameID")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TrendingStartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TrendId");
+
+                    b.HasIndex("GameID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("TrendingGames");
+                });
+
             modelBuilder.Entity("GameForge.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -539,17 +557,6 @@ namespace GameForge.Migrations
                     b.Navigation("User");
 
                     b.Navigation("game");
-                });
-
-            modelBuilder.Entity("GameForge.Models.Collectables", b =>
-                {
-                    b.HasOne("GameForge.Models.Library", "library")
-                        .WithMany()
-                        .HasForeignKey("LibraryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("library");
                 });
 
             modelBuilder.Entity("GameForge.Models.Game", b =>
@@ -676,6 +683,25 @@ namespace GameForge.Migrations
                     b.Navigation("ThreadTopic");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GameForge.Models.Trending", b =>
+                {
+                    b.HasOne("GameForge.Models.Game", "game")
+                        .WithMany()
+                        .HasForeignKey("GameID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameForge.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("game");
                 });
 
             modelBuilder.Entity("GameForge.Models.Wishlist", b =>

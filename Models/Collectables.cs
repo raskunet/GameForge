@@ -9,7 +9,5 @@ public class Collectables
 {
     public int CollectableID { get; set; } // Unique identifier for the collection
     public int UserID { get; set; } // ID of the user who owns the collectables
-    public int TotalCollectables {get;set;}=0;
-    public int LibraryID{get;set;}
-    public Library? library{get;set;}
+    public decimal TotalCollectables {get;set;}=0;
 }

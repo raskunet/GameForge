@@ -7,14 +7,13 @@ using NuGet.Protocol.Plugins;
 
 namespace GameForge.Models;
 
-public class Library
+public class Trending
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int LibraryID {get;set;}
-    public int UserID { get; set; } // ID of the user who owns the collectables
-    public int GameId {get;set;}
+    public int TrendId {get;set;}
+    public int GameID { get; set; } // Unique identifier for the game
+    public int UserID{get;set;}
     public Game? game{get;set;}
-    public DateTime LibraryCreationDate { get; set; } = DateTime.Now; // Date the library was created
+    public DateTime TrendingStartDate { get; set; } // Start date when the game became trending
     public User? User { get; set; }
 }

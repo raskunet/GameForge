@@ -60,7 +60,7 @@ namespace GameForge.Data
         public DbSet<Developer> Developers { get; set; }
         
 
-
+        public DbSet<Trending> TrendingGames{get;set;} = default!;
         public DbSet<Cart> Cart{ get; set; } = default!;
         public DbSet<Collectables> Collectables{ get; set; } = default!;
         public DbSet<Library> Libraries{ get; set; } = default!;

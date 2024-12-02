@@ -19,11 +19,6 @@ public class CartController : Controller
         var userId = 1; // Replace with proper user identification method
         var cart = _context.Cart.Include(c => c.game).FirstOrDefault(c => c.UserID == userId && !c.IsCheckedOut);
 
-        if (cart == null)
-        {
-            return View("EmptyCart");
-        }
-
         // var cartItems = _context.Cart.Where(c => c.UserID == userId && !c.IsCheckedOut).ToList();
         var cartItems = _context.Cart
         .Include(c => c.game)  // Ensure Game is loaded
@@ -38,6 +33,11 @@ public class CartController : Controller
         .FirstOrDefault(c => c.UserID == userId);
 
         var totalCollectables = collectables?.TotalCollectables ?? 0;
+
+        if (cart == null)
+        {
+            return View("EmptyCart",collectables);
+        }
 
         var viewModel = new CartViewModel
         {
@@ -93,7 +93,22 @@ public class CartController : Controller
         {
             return RedirectToAction("EmptyCart");
         }
+        // Redirect to the checkout confirmation view
+        var totalPrice = cartItems.Sum(item => item.game.Price);
+        // Get TotalCollectables from the Collectables table for this user
+        var collectables = _context.Collectables
+        .FirstOrDefault(c => c.UserID == userId);
 
+        var totalCollectables = collectables?.TotalCollectables ?? 0;
+        if (totalPrice > totalCollectables)
+        {
+            return BadRequest("Not enough creds");
+        }
+         // Deduct the total price from the user's collectables
+        if (collectables != null)
+        {
+            collectables.TotalCollectables -= totalPrice;
+        }
         // Add games to the user's library
         foreach (var item in cartItems)
         {
@@ -115,8 +130,7 @@ public class CartController : Controller
 
         _context.SaveChanges();
 
-        // Redirect to the checkout confirmation view
-        var totalPrice = cartItems.Sum(item => item.game.Price);
+        
         var viewModel = new CartViewModel
         {
             CartItems = cartItems,

@@ -1,0 +1,21 @@
+@model IEnumerable<GameForge.Models.Game>
+
+<h2>Trending Games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Game Name</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.AverageRating</td>
+            </tr>
+        }
+    </tbody>
+</table>
