@@ -8,16 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameForge.Controllers
 {
     public class ThreadTopicReplyController : Controller
     {
-        private readonly GameForgeContext _context;
+       private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ThreadTopicReplyController(GameForgeContext context)
+        public ThreadTopicReplyController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
         }
 
         // GET: ThreadTopicReply
@@ -47,14 +55,23 @@ namespace GameForge.Controllers
         }
 
         // GET: ThreadTopicReply/Create
-        public IActionResult Create(int ThreadTopicID, int? ParentReplyID)
+        public async Task<IActionResult> Create(int ThreadTopicID, int? ParentReplyID)
         {
-            var ThreadReply = new ThreadReplyCreateViewModel
+            var threadReply = new ThreadReplyCreateViewModel
             {
                 ThreadTopicID = ThreadTopicID,
                 ParentReplyID = ParentReplyID
             };
-            return View(ThreadReply);
+            var latestThreadReply = await _context.ThreadTopicReplies.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == 1 && m.ThreadTopicID == ThreadTopicID);
+            if (latestThreadReply != null)
+            {
+                var timeSpan = DateTime.UtcNow - latestThreadReply.CreationDate;
+                if (timeSpan.TotalMinutes < 1)
+                {
+                    threadReply.CanCreate = false;
+                }
+            }
+            return View(threadReply);
         }
 
         // POST: ThreadTopicReply/Create
@@ -66,7 +83,9 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
+                var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
+        
                 if (user == null)
                 {
                     return NotFound();
@@ -81,13 +100,16 @@ namespace GameForge.Controllers
                 {
                     Message = threadReplyCreateViewModel.ThreadTopicReplyText,
                     CreationDate = DateTime.UtcNow,
+                    LastEditTime=DateTime.UtcNow,
                     User = user,
                     ThreadTopic = threadTopic,
                     ParentReply = parentReply,
                 };
+                threadTopic.NumberOfReplies += 1;
                 _context.Add(threadReply);
+                _context.Update(threadTopic);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","ThreadTopic",new {id=threadReplyCreateViewModel.ThreadTopicID});
             }
             return View(threadReplyCreateViewModel);
         }
@@ -100,13 +122,18 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
-            var ThreadReplyEditModel = new ThreadReplyEditViewModel
+            var threadReplyEditModel = new ThreadReplyEditViewModel
             {
                 ThreadTopicID = threadTopicReply.ThreadTopicReplyID,
                 ThreadTopicReplyText = threadTopicReply.Message,
                 //ParentReplyID = threadTopicReply.ParentReplyID
             };
-            return View(ThreadReplyEditModel);
+            var timeSpan = DateTime.UtcNow - threadTopicReply.LastEditTime;
+            if (timeSpan.TotalMinutes > 1)
+            {
+                threadReplyEditModel.CanEdit = false;
+            }
+            return View(threadReplyEditModel);
         }
 
         // POST: ThreadTopicReply/Edit/5
@@ -121,10 +148,12 @@ namespace GameForge.Controllers
                 try
                 {
                     var threadreply = await _context.ThreadTopicReplies.FindAsync(threadTopicEditReply.ThreadTopicID);
-                    if(threadreply==null){
+                    if (threadreply == null)
+                    {
                         return NotFound();
                     }
                     threadreply.Message = threadTopicEditReply.ThreadTopicReplyText;
+                    threadreply.LastEditTime = DateTime.UtcNow;
                     _context.Update(threadreply);
                     await _context.SaveChangesAsync();
                 }

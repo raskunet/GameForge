@@ -40,7 +40,7 @@
 
 <!-- User and Date Information -->
 <div class="text-end text-muted mt-2">
-    <small>Posted by @Model.Question.User.Username on @Model.Question.CreationDate.ToString("MMM dd, yyyy")</small>
+    <small>Posted by @Model.Question.User.UserName on @Model.Question.CreationDate.ToString("MMM dd, yyyy")</small>
 </div>
 
 <hr />
@@ -75,7 +75,7 @@
                     <div class="flex-grow-1">
                         <p>@Html.DisplayFor(_ => answer.AnswerText)</p>
                         <div class="d-flex justify-content-between mt-3">
-                            <small class="text-muted">Answered by @answer.User.Username on @answer.CreationDate.ToString("MMM dd, yyyy")</small>
+                            <small class="text-muted">Answered by @answer.User.UserName on @answer.CreationDate.ToString("MMM dd, yyyy")</small>
                         </div>
                     </div>
 

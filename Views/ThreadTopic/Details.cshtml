@@ -10,7 +10,7 @@
         <div class="card-body d-flex">
             <!-- User Info -->
             <div class="text-center me-3" style="width: 120px;">
-                <h6 class="mb-0">@Model.ThreadTopic.User.Username</h6>
+                <h6 class="mb-0">@Model.ThreadTopic.User.UserName</h6>
                 <small class="text-muted">Posted on <br>
                     <em>@Model.ThreadTopic.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
                 </small>
@@ -58,7 +58,7 @@
                     <div class="card-body d-flex">
                         <!-- Reply User Info -->
                         <div class="me-3 text-center" style="width: 120px;">
-                            <h6 class="mb-0">@reply.User.Username</h6>
+                            <h6 class="mb-0">@reply.User.UserName</h6>
                             <small class="text-muted">Replied on <br>
                                 <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
                             </small>

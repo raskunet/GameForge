@@ -7,8 +7,10 @@
 <h1 class="text-center text-primary mb-4">@ViewData["Title"]</h1>
 
 <div class="container">
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white">
+    @if (!Model.CanEdit)
+    {
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
             <h4 class="mb-0">Edit Your Question</h4>
         </div>
         <div class="card-body">
@@ -39,6 +41,9 @@
             </form>
         </div>
     </div>
+    }else{
+        <p>you can't Edit the Question rn :/ </p>
+    }
 
     <!-- Back to Question List Link -->
     <div class="text-center mt-4">

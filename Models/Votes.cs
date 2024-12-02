@@ -5,7 +5,7 @@ namespace GameForge.Models;
 
 public class QuestionVote
 {
-    public int UserID { get; set; }
+    public string UserID { get; set; }=null!;
     public int QuestionID { get; set; }
     public bool IsUpvote { get; set; } = false;
 
@@ -15,7 +15,7 @@ public class QuestionVote
 
 public class AnswerVote
 {
-    public int UserID { get; set; }
+    public string UserID { get; set; }=null!;
     public int QuestionID { get; set; }
     public bool IsUpvote { get; set; }
     public required User User { get; set; }

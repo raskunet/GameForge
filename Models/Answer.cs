@@ -8,7 +8,7 @@ namespace GameForge.Models;
 public class Answer
 {
     public int QuestionID { get; set; }
-    public int UserID { get; set; }
+    public string UserID { get; set; }=null!;
     public string AnswerText { get; set; } = string.Empty;
     public int Upvotes { get; set; }
     public int Downvotes { get; set; }
@@ -24,13 +24,14 @@ public class AnswerCreateViewModel
     public string AnswerText { get; set; } = null!;
     [HiddenInput(DisplayValue =false)]
     public int QuestionID{ get; set; }
+    public bool CanCreate { get; set; } = true;
 }
 
 [NotMapped]
 public class AnswerVoteAction
 {
     public int QuestionID { get; set; }
-    public int UserID{ get; set; }
+    public required string UserID{ get; set; }
     public bool Type{ get; set; }
 }
 
@@ -39,6 +40,7 @@ public class AnswerEditViewModel
 {
     public required int QuestionID{ get; set;}
 
-    public required int UserID{ get; set; }
+    public required string UserID{ get; set; }
     public required string AnswerText{ get; set; }
+    public bool CanEdit { get; set; } = true;
 }

@@ -7,30 +7,35 @@
 <h1 class="text-center text-primary mb-4">@ViewData["Title"]</h1>
 
 <div class="container">
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Edit Your Question</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit">
-                <input type="hidden" asp-for="QuestionID" />
-                <input type="hidden" asp-for="UserID"/>
-                <!-- Question Text Field -->
-                <div class="form-group mb-4">
-                    <label asp-for="AnswerText" class="form-label fs-5 fw-semibold text-secondary">Answer Details:</label>
-                    <textarea asp-for="AnswerText" class="form-control border-primary" rows="8"
+    @if (!Model.CanEdit)
+    {
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Edit Your Question</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="QuestionID" />
+                    <input type="hidden" asp-for="UserID"/>
+                    <!-- Question Text Field -->
+                    <div class="form-group mb-4">
+                        <label asp-for="AnswerText" class="form-label fs-5 fw-semibold text-secondary">Answer Details:</label>
+                        <textarea asp-for="AnswerText" class="form-control border-primary" rows="8"
                         placeholder="Provide more details for your question here"
                         style="resize: vertical; font-size: 1.1rem;"></textarea>
-                    <span asp-validation-for="AnswerText" class="text-danger mt-1"></span>
-                </div>
+                        <span asp-validation-for="AnswerText" class="text-danger mt-1"></span>
+                    </div>
 
-                <!-- Save Button -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-lg btn-primary px-5">Save Changes</button>
-                </div>
-            </form>
+                    <!-- Save Button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-primary px-5">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    }else{
+        <p>you can't Edit the answer rn :/</p>
+    }
 
     <!-- Back to Question List Link -->
     <div class="text-center mt-4">
