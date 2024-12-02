@@ -3,17 +3,24 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
 using Markdig;
+using Microsoft.AspNetCore.Identity;
 namespace GameForge.Controllers
 {
     public class QuestionController : Controller
     {
         private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public QuestionController(GameForgeContext context)
+        public QuestionController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
+        }
         // GET: Question
         public async Task<IActionResult> Index(string QuestionSearchString)
         {
@@ -35,7 +42,8 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
-            var userID = 1;
+            var userID=await GetCurrentUserIdAsync();
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
             var answerFlag = false;
             var question = await _context.Question
                 .Include(q => q.User)
@@ -58,8 +66,11 @@ namespace GameForge.Controllers
         // GET: Question/Create
         public async Task<IActionResult> Create()
         {
+            var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
+            
             var QuestionCreate = new QuestionCreateViewModel();
-            var LatestQuestion = await _context.Question.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.AuthorID == 1);
+            var LatestQuestion = await _context.Question.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.AuthorID == userID);
             if (LatestQuestion != null)
             {
                 var timeSpan = DateTime.UtcNow - LatestQuestion.CreationDate;
@@ -81,8 +92,9 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = await GetCurrentUserIdAsync();
                 //TODO : Get Current User From saved Cookie and Use that instead of this 
-                var tempUser = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
+                var tempUser = await _context.User.FirstOrDefaultAsync(m => m.Id==userId);
                 if (tempUser == null)
                 {
                     return NotFound();
@@ -121,11 +133,14 @@ namespace GameForge.Controllers
                 QuestionText = question.QuestionText,
                 Title = question.Title
             };
-            var LatestEditQuestion = await _context.Question.FirstOrDefaultAsync(m => m.AuthorID == 1 && m.QuestionID == id);
+            var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
+            
+            var LatestEditQuestion = await _context.Question.FirstOrDefaultAsync(m => m.AuthorID == userID && m.QuestionID == id);
             if (LatestEditQuestion != null)
             {
                 var timeS = DateTime.UtcNow - LatestEditQuestion.LastEditTime;
-                if (timeS.TotalMinutes > 1)
+                if (timeS.TotalMinutes < 1)
                 {
                     questionEditViewModel.CanEdit = false;
                 }
@@ -144,7 +159,8 @@ namespace GameForge.Controllers
             {
                 try
                 {
-                    var userID = 1;
+                    var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                     var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionEditViewModel.QuestionID && m.User.Id == userID);
                     if (question == null)
                     {
@@ -219,8 +235,8 @@ namespace GameForge.Controllers
         [HttpPost, ActionName("QuestionVote")]
         public async Task<IActionResult> QuestionVote([FromBody] QuestionVoteAction questionVoteAction)
         {
-            var userId = 1; //GetCurrentUserId();
-            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
+            var userID=await GetCurrentUserIdAsync();
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
             if (user == null)
             {
                 return NotFound();
@@ -228,10 +244,10 @@ namespace GameForge.Controllers
             var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionVoteAction.QuestionID);
             if (question == null) return NotFound();
 
-
+            
 
             var existingVote = await _context.QuestionVotes
-                .FirstOrDefaultAsync(v => v.QuestionID == questionVoteAction.QuestionID && v.UserID == userId);
+                .FirstOrDefaultAsync(v => v.QuestionID == questionVoteAction.QuestionID && v.UserID == userID);
             if (existingVote != null)
             {
                 if (questionVoteAction.Type == existingVote.IsUpvote)

@@ -7,16 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameForge.Controllers
 {
     public class AnswerController : Controller
     {
         private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public AnswerController(GameForgeContext context)
+        public AnswerController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
         }
 
         // GET: Answer
@@ -50,8 +58,9 @@ namespace GameForge.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int QuestionID)
         {
+            var userId = await GetCurrentUserIdAsync();
             var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID, CanCreate = false };
-            var latestAnswer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == 1);
+            var latestAnswer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == userId);
             if (latestAnswer != null)
             {
                 return Problem("You already Answered.");
@@ -68,9 +77,10 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userID = 1;
+                 var userId = await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
                 var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
-                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
+                
                 if (question == null || user == null)
                 {
                     return NotFound();
@@ -96,7 +106,7 @@ namespace GameForge.Controllers
         }
 
         // GET: Answer/Edit/5
-        public async Task<IActionResult> Edit(int QuestionID, int UserID)
+        public async Task<IActionResult> Edit(int QuestionID, string UserID)
         {
             var answer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == UserID);
             if (answer == null)

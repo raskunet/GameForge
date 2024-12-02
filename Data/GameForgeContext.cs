@@ -4,13 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using GameForge.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace GameForge.Data
 {
-    public class GameForgeContext(DbContextOptions<GameForgeContext> options) : DbContext(options)
+    public class GameForgeContext(DbContextOptions<GameForgeContext> options) : IdentityDbContext<User>(options)
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasKey(e=>e.Id);
             modelBuilder.Entity<ThreadTopic>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.ThreadTopics)
@@ -31,6 +35,8 @@ namespace GameForge.Data
 
             modelBuilder.Entity<AnswerVote>()
                 .HasKey(e => new { e.QuestionID, e.UserID });
+            
+            base.OnModelCreating(modelBuilder);
 
         }
 

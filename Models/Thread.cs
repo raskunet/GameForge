@@ -14,7 +14,7 @@ public class ThreadTopic
     public int ThreadTopicID { get; set; }
 
     [HiddenInput(DisplayValue = false)]
-    public int UserID { get; set; }
+    public string UserID { get; set; }=null!;
     public string Title { get; set; } = string.Empty;
 
     [HiddenInput(DisplayValue = false)]
