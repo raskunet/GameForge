@@ -26,23 +26,45 @@ namespace GameForge.Controllers
             return user.Id;
         }
         // GET: Question
-        public async Task<IActionResult> Index(string QuestionSearchString)
+        public async Task<IActionResult> Index(string QuestionSearchString,string sortOrder)
         {
             if (_context.Question == null)
             {
                 return Problem("Entity Set `GameForge.Models.Question` is null");
             }
+
+            ViewData["DateSortParam"] = sortOrder == "date_asc" ? "date_desc" : "date_asc";
+            //ViewData["VoteSortParam"] = sortOrder == "up" ? "down" : "up";
+            ViewData["NumAnswerSortParam"] = sortOrder == "more" ? "less" : "more";
+
             var questions = from q in _context.Question
                             select q;
-            if (!string.IsNullOrEmpty(QuestionSearchString))
-            {
-                questions = questions.Where(w => w.Title!.ToUpper().Contains(QuestionSearchString.ToUpper()));
+            if(!string.IsNullOrEmpty(QuestionSearchString)){
+                questions = questions.Where(w => w.Title.ToUpper().Contains(QuestionSearchString.ToUpper(),StringComparison.OrdinalIgnoreCase));
             }
-            return View(await questions.ToListAsync());
+
+            switch(sortOrder){
+                case "date_asc":
+                    questions = questions.OrderBy(m => m.CreationDate);
+                    break;
+                case "date_desc":
+                    questions = questions.OrderByDescending(m => m.CreationDate);
+                    break;
+                case "more":
+                    questions = questions.OrderBy(m => m.NumberOfAnswers);
+                    break;
+                case "less":
+                    questions = questions.OrderByDescending(m => m.NumberOfAnswers);
+                    break;
+                default:
+                    questions = questions.OrderBy(m => m.Title);
+                    break;
+            }
+            return View(await questions.AsNoTracking().ToListAsync());
         }
 
         // GET: Question/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
