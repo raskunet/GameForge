@@ -10,7 +10,7 @@
         <p><strong>Category:</strong> @Model.Category</p>
         <p><strong>Release Date:</strong> @Model.ReleaseDate.ToString("MMMM dd, yyyy")</p>
         <p><strong>Price:</strong> $@Model.Price</p>
-        <p><strong>Average Rating:</strong> @Model.AverageRating.ToString("0.0") / 5</p> 
+        <p><strong>Average Rating:</strong> @Model.AverageRating.ToString("0.0") / 5</p>
     </div>
 
     <div class="game-image">
@@ -21,6 +21,27 @@
         <h4>Description</h4>
         <p>@Model.Description</p>
     </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        bool? hasPurchased = ViewData["PurchaseCond"] as bool?;
+        if (!hasPurchased.HasValue || !hasPurchased.Value)
+        {
+            <!-- Purchase Button -->
+            <form asp-action="Purchase" asp-controller="Games" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-success">Buy Game for $@Model.Price</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-success"><strong>You already own this game!</strong></p>
+        }
+    }
+    else
+    {
+        <p class="text-danger"><strong>You need to log in to purchase this game.</strong></p>
+    }
 
     @if (!string.IsNullOrEmpty(Model.GameplayLink))
     {
@@ -35,11 +56,19 @@
 @{
     bool? purchaseCond = ViewData["PurchaseCond"] as bool?;
 }
-@if (purchaseCond.HasValue && purchaseCond.Value)
+@inject Microsoft.AspNetCore.Identity.UserManager<GameForge.Models.User> UserManager
+@{
+    var userId = User.Identity.IsAuthenticated 
+        ? UserManager.GetUserId(User) 
+        : null;
+}
+@if (purchaseCond.HasValue && purchaseCond.Value && User.Identity.IsAuthenticated)
 {
     <h3>Submit a Review</h3>
     <form asp-action="Create" asp-controller="Reviews" method="post" class="review-form">
         <input type="hidden" name="GameId" value="@Model.Id" />
+
+        <input type="hidden" name="UserId" value=userId />
         
         <div class="form-group">
             <label for="Rating">Rating (1-5)</label>
@@ -70,12 +99,14 @@ else
                 <strong>@review.Rating/5 Stars</strong> - @review.Comment <br />
                 <em>Posted on @review.CreatedAt.ToString("MMMM dd, yyyy")</em>
 
-                @if (review.UserId == 1) // Hardcoded user ID, replace with actual user when login is implemented
+                
+                @if (review.UserId == (string)ViewData["CurrentUserId"])
                 {
                     <!-- Inline Edit Form -->
                     <form asp-action="Edit" asp-controller="Reviews" method="post" class="inline-form">
                         <input type="hidden" name="Id" value="@review.Id" />
                         <input type="hidden" name="GameId" value="@Model.Id" />
+                        <input type="hidden" name="UserId" value=userId />
                         <label for="Rating">Edit Rating:</label>
                         <input type="number" name="Rating" value="@review.Rating" min="1" max="5" class="form-control-inline" />
 

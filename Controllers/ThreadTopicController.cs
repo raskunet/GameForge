@@ -8,18 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
 using Amazon.SecurityToken.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameForge.Controllers
 {
     public class ThreadTopicController : Controller
     {
         private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ThreadTopicController(GameForgeContext context)
+        public ThreadTopicController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
+        }
         // GET: ThreadTopic
         public async Task<IActionResult> Index(string ThreadTag, string ThreadSearchString)
         {
@@ -80,7 +87,9 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Create()
         {
             var threadTopicCreate = new ThreadCreateViewModel();
-            var lastThreadTopic = await _context.ThreadTopic.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == 1);
+            var userID=await GetCurrentUserIdAsync();
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
+            var lastThreadTopic = await _context.ThreadTopic.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == userID);
             if (lastThreadTopic != null)
             {
                 var timeSpan = DateTime.UtcNow - lastThreadTopic.CreationDate;
@@ -104,7 +113,8 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
+                var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                 if (user == null)
                 {
                     return NotFound();

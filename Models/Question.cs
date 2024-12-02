@@ -10,7 +10,7 @@ public class Question
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int QuestionID { get; set; }
-    public int AuthorID { get; set; }
+    public string AuthorID { get; set; }
     public string Title { get; set; } = string.Empty;
     public DateTime CreationDate { get; set; }
     public DateTime LastEditTime{get;set;}

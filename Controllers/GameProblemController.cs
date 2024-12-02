@@ -8,16 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Data;
 using GameForge.Models;
 using NuGet.Versioning;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameForge.Controllers
 {
     public class GameProblemController : Controller
     {
         private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public GameProblemController(GameForgeContext context)
+        public GameProblemController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
         }
 
         // GET: GameProblem
@@ -66,7 +74,8 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == 1);
+                var userID=await GetCurrentUserIdAsync();
+                var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                 if (user == null) {
                     return NotFound();
                 }

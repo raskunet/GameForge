@@ -4,26 +4,37 @@ using GameForge.Data;
 using GameForge.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace GameForge.Controllers
 {
     public class ReviewsController : Controller
     {
         private readonly GameForgeContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ReviewsController(GameForgeContext context)
+        public ReviewsController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+        private async Task<string> GetCurrentUserIdAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
         }
 
-        // GET: Reviews/Create
-        public IActionResult Create(int gameId)
+        // GET:     Reviews/Create
+        
+        public async Task<IActionResult> Create(int gameId)
         {
-
-            
-            // Assuming user is hardcoded for now
-            var userId = 3; // Replace with actual user logic later
-
+            var userId = await GetCurrentUserIdAsync();
+            ViewData["UId"] = userId; 
+            Console.WriteLine("ye user id ha bhai {0}",userId);
             // Check if the user has purchased the game
             bool hasPurchased = _context.Purchase
                 .Any(p => p.GameId == gameId && p.UserId == userId);
@@ -32,26 +43,27 @@ namespace GameForge.Controllers
             {
                 return Unauthorized("You can only review games that you have purchased.");
             }
-            var review = new Review { GameId = gameId, UserId = userId };
-            return View(review);
+            // var review = new Review { GameId = gameId, UserId = userId };
+            // return View(review);
+
+            return View();
         }
+
 
         // POST: Reviews/Create
         [HttpPost]
+        [Authorize(Roles = "User")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameId,Rating,Comment")] Review review)
+        public async Task<IActionResult> Create([Bind("UserId,GameId,Rating,Comment")] Review review)
         {
-            // Assuming user is hardcoded for now
-            var userId = 3; // Replace with actual user logic later
+            var userId = await GetCurrentUserIdAsync();
             review.UserId = userId;
 
-            // Check if the user has purchased the game
-            bool hasPurchased = _context.Purchase
-                .Any(p => p.GameId == review.GameId && p.UserId == userId);
-
+            // Verify purchase
+            bool hasPurchased = _context.Purchase.Any(p => p.GameId == review.GameId && p.UserId == userId);
             if (!hasPurchased)
             {
-                return Unauthorized("You can only review games that you have purchased.");
+                return Unauthorized("You can only review games you have purchased.");
             }
 
             if (ModelState.IsValid)
@@ -62,8 +74,14 @@ namespace GameForge.Controllers
                 return RedirectToAction("Details", "Games", new { id = review.GameId });
             }
 
-            return View(review);
+            var errors = ModelState
+                .Where(ms => ms.Value.Errors.Count > 0)
+                .Select(ms => new { ms.Key, ms.Value.Errors })
+                .ToList();
+
+                return BadRequest(errors);
         }
+
 
         // GET: Reviews/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -73,15 +91,15 @@ namespace GameForge.Controllers
                 return NotFound();
             }
 
-            var userId = 3; // Replace with actual user logic later
-
+            
+            var userId = await GetCurrentUserIdAsync();
+            
             var review = await _context.Review.FindAsync(id);
             if (review == null)
             {
                 return NotFound();
             }
 
-            // Check if the review belongs to the current user
             if (review.UserId != userId)
             {
                 return Unauthorized("You can only edit your own reviews.");
@@ -93,7 +111,7 @@ namespace GameForge.Controllers
         // POST: Reviews/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,GameId,Rating,Comment")] Review review)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,GameId,Rating,Comment")] Review review)
         {
             if (id != review.Id)
             {
@@ -101,8 +119,8 @@ namespace GameForge.Controllers
             }
 
             // Assuming user is hardcoded for now
-            var userId = 3; // Replace with actual user logic later
-
+            var userId = await GetCurrentUserIdAsync();
+            
             // Ensure the review belongs to the current user
             var existingReview = await _context.Review.AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId);
@@ -143,8 +161,8 @@ namespace GameForge.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Assuming user is hardcoded for now
-            var userId = 3; // Replace with actual user logic later
-
+            var userId = await GetCurrentUserIdAsync();
+            
             var review = await _context.Review.FindAsync(id);
             if (review == null)
             {

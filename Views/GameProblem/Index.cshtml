@@ -9,7 +9,7 @@
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.Title)</th>
                     <th>@Html.DisplayNameFor(model => model.CreationDate)</th>
-                    <th>@Html.DisplayNameFor(model => model.User.Username)</th>
+                    <th>@Html.DisplayNameFor(model => model.User.UserName)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -19,7 +19,7 @@
                         <tr>
                             <td>@Html.DisplayFor(modelItem => item.Title)</td>
                             <td>@item.CreationDate.ToString("MMM, dd yyyy") </td>
-                            <td>@Html.DisplayFor(modelItem => item.User.Username)</td>
+                            <td>@Html.DisplayFor(modelItem => item.User.UserName)</td>
                             <td>@Html.ActionLink("Details","Details","GameProblem",new {GameProblemID=item.GameProblemID},new {@class="btn btn-secondary"}) </td>
                         </tr>
                     }
