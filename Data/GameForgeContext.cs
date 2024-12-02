@@ -54,28 +54,25 @@ namespace GameForge.Data
         }
 
         public DbSet<User> User { get; set; } = default!;
-        public DbSet<ThreadTopic> ThreadTopic { get; set; }
-        public DbSet<ThreadTopicReply> ThreadTopicReplies { get; set; }
+        public DbSet<ThreadTopic>? ThreadTopic { get; set; }
+        public DbSet<ThreadTopicReply>? ThreadTopicReplies { get; set; }
         public DbSet<Question> Question { get; set; } = default!;
         public DbSet<Answer> Answer { get; set; } = default!;
         public DbSet<AnswerVote> AnswerVotes { get; set; } = default!;
         public DbSet<QuestionVote> QuestionVotes { get; set; } = default!;
         public DbSet<ThreadTag> ThreadTags { get; set; } = default!;
-        public DbSet<Review> Review { get; set; }
-        public DbSet<Purchase> Purchase { get; set; }
-        public DbSet<Developer> Developers { get; set; }
+        public DbSet<Review>? Review { get; set; }
+        public DbSet<Purchase>? Purchase { get; set; }
+        public DbSet<Developer>? Developers { get; set; }
         
 
-        public DbSet<Trending> TrendingGames{get;set;} = default!;
+        public DbSet<Featured> FeaturedGames{get;set;} = default!;
         public DbSet<Cart> Cart{ get; set; } = default!;
         public DbSet<Collectables> Collectables{ get; set; } = default!;
         public DbSet<Library> Libraries{ get; set; } = default!;
         public DbSet<Wishlist> Wishlist{ get; set; } = default!;
         
         public DbSet<Game> Game { get; set; } = default!;
-        public DbSet<Review> Review { get; set; } = default!;
-        public DbSet<Purchase> Purchase { get; set; } = default!;
-        public DbSet<Developer> Developers { get; set; } = default!;
         public DbSet<GameProblem> GameProblems { get; set; } = default!;
     }
 }

@@ -96,12 +96,9 @@ namespace GameForge.Controllers
 
         return View(game);
         }
-
-
-
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         [HttpPost]
-        public async Task<IActionResult> Purchase(int id)
+        public async Task<IActionResult> AddToCart(int id)
         {
             var userId = await GetCurrentUserIdAsync();
             if (userId == null) return Unauthorized();
@@ -110,29 +107,118 @@ namespace GameForge.Controllers
             var game = await _context.Game.FindAsync(id);
             if (game == null) return NotFound();
 
-            // Check if the user already purchased the game
+            // Check if the game is already in the user's cart
+            var existingCartItem = _context.Cart.FirstOrDefault(c => c.GameId == id && c.UserID == userId && !c.IsCheckedOut);
+            if (existingCartItem != null)
+            {
+                TempData["Message"] = "This game is already in your cart.";
+                return RedirectToAction("Index","Cart");
+            }
+            // Check if the game is already in the user's cart
+            var existingLibItem = _context.Libraries.FirstOrDefault(c => c.GameId == id && c.UserID == userId);
+            if (existingLibItem != null)
+            {
+                ViewData["WarningMessage"] = "You already Own this game";
+                return RedirectToAction("Index","Games");
+            }
+
+            // Add the game to the cart
+            var cartItem = new Cart
+            {
+                UserID = userId,
+                GameId = id,
+                IsCheckedOut = false,
+                CreationDate = DateTime.UtcNow // Add this field to the Cart model if not already present
+            };
+
+            _context.Cart.Add(cartItem);
+            await _context.SaveChangesAsync();
             var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == id && p.UserId == userId);
             if (existingPurchase != null)
             {
-                TempData["Message"] = "You already own this game!";
-                return RedirectToAction(nameof(Details), new { id });
+                var purchase = new Purchase
+                {
+                    UserId = userId,
+                    GameId = id,
+                    PurchaseDate = DateTime.UtcNow,
+                    PricePaid = game.PriceAfterDiscount
+                };
+
+                _context.Purchase.Add(purchase);
+                await _context.SaveChangesAsync();
             }
 
-            // Create a new purchase
-            var purchase = new Purchase
+            TempData["Message"] = "Game added to your cart!";
+            return RedirectToAction("Index","Cart");
+        }
+         [HttpPost]
+        public async Task<IActionResult> AddToWishlist(int id)
+        {
+            var userId = await GetCurrentUserIdAsync();
+            if (userId == null) return Unauthorized();
+
+            var game = await _context.Game.FindAsync(id);
+            if (game == null) return NotFound();
+
+            // Check if the game is already in the user's cart
+            var existingCartItem = _context.Wishlist.FirstOrDefault(c => c.GameId == id && c.UserID == userId);
+            if (existingCartItem != null)
             {
-                UserId = userId,
+                TempData["Message"] = "This game is already in your Wishlist.";
+                return RedirectToAction("Index","Wishlist");
+            }
+        
+            // Add the game to the cart
+            var wishlistItem = new Wishlist
+            {
+                UserID = userId,
                 GameId = id,
-                PurchaseDate = DateTime.Now,
-                PricePaid = game.PriceAfterDiscount
+                WishlistAdditionDate = DateTime.UtcNow // Add this field to the Cart model if not already present
             };
 
-            _context.Purchase.Add(purchase);
+            _context.Wishlist.Add(wishlistItem);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = "Purchase successful!";
-            return RedirectToAction(nameof(Details), new { id });
+            TempData["Message"] = "Game added to your Wishlist!";
+            return RedirectToAction("Index","Wishlist");
         }
+
+
+        //[Authorize(Roles = "User")]
+        // [HttpPost]
+        // public async Task<IActionResult> Purchase(int id)
+        // {
+        //     var userId = await GetCurrentUserIdAsync();
+        //     if (userId == null) return Unauthorized();
+
+        //     // Check if the game exists
+        //     var game = await _context.Game.FindAsync(id);
+        //     if (game == null) return NotFound();
+
+        //     // Check if the user already purchased the game
+        //     //var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == id && p.UserId == userId);
+        //     // if (existingPurchase != null)
+        //     // {
+        //     //     TempData["Message"] = "You already own this game!";
+        //     //     return RedirectToAction(nameof(Details), new { id });
+        //     // }
+
+        //     // Create a new purchase
+        //     var purchase = new Purchase
+        //     {
+        //         UserId = userId,
+        //         GameId = id,
+        //         PurchaseDate = DateTime.UtcNow,
+        //         PricePaid = game.PriceAfterDiscount
+        //     };
+
+        //     _context.Purchase.Add(purchase);
+        //     await _context.SaveChangesAsync();
+
+        //     TempData["Message"] = "Purchase successful!";
+        //     return RedirectToAction("Index","Cart");
+        // }
+
 
 
         private bool GameExists(int id)

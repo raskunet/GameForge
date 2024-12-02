@@ -7,13 +7,14 @@ using NuGet.Protocol.Plugins;
 
 namespace GameForge.Models;
 
-public class Trending
+public class Featured
 {
     [Key]
-    public int TrendId {get;set;}
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id {get;set;}
     public int GameID { get; set; } // Unique identifier for the game
-    public int UserID{get;set;}
+    public string? UserID{get;set;}
     public Game? game{get;set;}
-    public DateTime TrendingStartDate { get; set; } // Start date when the game became trending
+    public DateTime FeaturingStartDate { get; set; } // Start date when the game became trending
     public User? User { get; set; }
 }

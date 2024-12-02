@@ -3,20 +3,38 @@ using Microsoft.EntityFrameworkCore;
 using GameForge.Models;
 using GameForge.Data;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 public class CartController : Controller
 {
     private readonly GameForgeContext _context;
+    
+    private readonly UserManager<User> _userManager;
 
-    public CartController(GameForgeContext context)
+    public CartController(GameForgeContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
+    
+    private async Task<string> GetCurrentUserIdAsync()
+    {
+            var user = await _userManager.GetUserAsync(User);
+            return user.Id;
+    }    
 
     // Get Cart
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var userId = 1; // Replace with proper user identification method
+        // var userId = 1; // Replace with proper user identification method
+        var userId = await GetCurrentUserIdAsync();
+        if (userId == null) return Unauthorized();
+        if(!_context.Cart.Any(c => c.UserID == userId && !c.IsCheckedOut))
+        {
+            return View("EmptyCart");
+        }
         var cart = _context.Cart.Include(c => c.game).FirstOrDefault(c => c.UserID == userId && !c.IsCheckedOut);
 
         // var cartItems = _context.Cart.Where(c => c.UserID == userId && !c.IsCheckedOut).ToList();
@@ -32,11 +50,11 @@ public class CartController : Controller
         var collectables = _context.Collectables
         .FirstOrDefault(c => c.UserID == userId);
 
-        var totalCollectables = collectables?.TotalCollectables ?? 0;
+        var totalCollectables = collectables?.TotalCollectables ?? 1000;
 
         if (cart == null)
         {
-            return View("EmptyCart",collectables);
+            return View("EmptyCart");
         }
 
         var viewModel = new CartViewModel
@@ -81,9 +99,10 @@ public class CartController : Controller
     //     return View("CheckoutConfirmation");
     // }
     [HttpPost]
-    public IActionResult Checkout()
+    public async Task<IActionResult> Checkout()
     {
-        var userId = 1; // Replace with actual user identification method
+         var userId = await GetCurrentUserIdAsync();
+        if (userId == null) return Unauthorized(); // Replace with actual user identification method
         var cartItems = _context.Cart
             .Include(c => c.game) // Load related Game entity
             .Where(c => c.UserID == userId && !c.IsCheckedOut)
@@ -99,7 +118,7 @@ public class CartController : Controller
         var collectables = _context.Collectables
         .FirstOrDefault(c => c.UserID == userId);
 
-        var totalCollectables = collectables?.TotalCollectables ?? 0;
+        var totalCollectables = collectables?.TotalCollectables ?? 1000;
         if (totalPrice > totalCollectables)
         {
             return BadRequest("Not enough creds");
@@ -140,10 +159,5 @@ public class CartController : Controller
         return View("CheckoutConfirmation", viewModel);
     }
 
-    public int GetTotalCollectables(int userId=1)
-    {
-        // Count the number of games in the user's library
-        return _context.Libraries.Count(l => l.UserID == userId);
-    }
 
 }

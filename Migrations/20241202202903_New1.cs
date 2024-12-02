@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     /// <inheritdoc />
-    public partial class migration3 : Migration
+    public partial class New1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,19 @@ namespace GameForge.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Collectables",
+                columns: table => new
+                {
+                    CollectableID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<string>(type: "text", nullable: false),
+                    TotalCollectables = table.Column<decimal>(type: "numeric", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Collectables", x => new { x.CollectableID, x.UserID });
                 });
 
             migrationBuilder.CreateTable(
@@ -259,6 +272,60 @@ namespace GameForge.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    CartID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<string>(type: "text", nullable: false),
+                    GameId = table.Column<int>(type: "integer", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsCheckedOut = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => new { x.CartID, x.UserID });
+                    table.ForeignKey(
+                        name: "FK_Cart_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cart_Game_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Game",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeaturedGames",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    GameID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<string>(type: "text", nullable: true),
+                    FeaturingStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeaturedGames", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeaturedGames_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_FeaturedGames_Game_GameID",
+                        column: x => x.GameID,
+                        principalTable: "Game",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GameProblems",
                 columns: table => new
                 {
@@ -288,6 +355,32 @@ namespace GameForge.Migrations
                     table.ForeignKey(
                         name: "FK_GameProblems_Game_GameID",
                         column: x => x.GameID,
+                        principalTable: "Game",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Libraries",
+                columns: table => new
+                {
+                    LibraryID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserID = table.Column<string>(type: "text", nullable: true),
+                    GameId = table.Column<int>(type: "integer", nullable: false),
+                    LibraryCreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Libraries", x => x.LibraryID);
+                    table.ForeignKey(
+                        name: "FK_Libraries_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Libraries_Game_GameId",
+                        column: x => x.GameId,
                         principalTable: "Game",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -338,6 +431,32 @@ namespace GameForge.Migrations
                     table.PrimaryKey("PK_Review", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Review_Game_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Game",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wishlist",
+                columns: table => new
+                {
+                    WishlistID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<string>(type: "text", nullable: false),
+                    GameId = table.Column<int>(type: "integer", nullable: false),
+                    WishlistAdditionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlist", x => new { x.WishlistID, x.UserID });
+                    table.ForeignKey(
+                        name: "FK_Wishlist_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wishlist_Game_GameId",
                         column: x => x.GameId,
                         principalTable: "Game",
                         principalColumn: "Id",
@@ -505,6 +624,26 @@ namespace GameForge.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cart_GameId",
+                table: "Cart",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cart_UserID",
+                table: "Cart",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeaturedGames_GameID",
+                table: "FeaturedGames",
+                column: "GameID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeaturedGames_UserID",
+                table: "FeaturedGames",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Game_DeveloperId",
                 table: "Game",
                 column: "DeveloperId");
@@ -523,6 +662,16 @@ namespace GameForge.Migrations
                 name: "IX_GameProblems_UserId",
                 table: "GameProblems",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Libraries_GameId",
+                table: "Libraries",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Libraries_UserID",
+                table: "Libraries",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Purchase_GameId",
@@ -568,6 +717,16 @@ namespace GameForge.Migrations
                 name: "IX_ThreadTopicReplies_UserId",
                 table: "ThreadTopicReplies",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlist_GameId",
+                table: "Wishlist",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlist_UserID",
+                table: "Wishlist",
+                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -595,7 +754,19 @@ namespace GameForge.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Cart");
+
+            migrationBuilder.DropTable(
+                name: "Collectables");
+
+            migrationBuilder.DropTable(
+                name: "FeaturedGames");
+
+            migrationBuilder.DropTable(
                 name: "GameProblems");
+
+            migrationBuilder.DropTable(
+                name: "Libraries");
 
             migrationBuilder.DropTable(
                 name: "Purchase");
@@ -613,16 +784,19 @@ namespace GameForge.Migrations
                 name: "ThreadTopicReplies");
 
             migrationBuilder.DropTable(
+                name: "Wishlist");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Question");
 
             migrationBuilder.DropTable(
-                name: "Game");
+                name: "ThreadTopic");
 
             migrationBuilder.DropTable(
-                name: "ThreadTopic");
+                name: "Game");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

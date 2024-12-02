@@ -64,6 +64,11 @@
                         <form asp-action="Delete" asp-route-id="@game.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this game?');" style="display:inline;">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
+
+                        <form asp-action="AddToFeatured" method="post">
+                        <input type="hidden" name="id" value="@game.Id" />
+                        <button type="submit" class="btn btn-primary">Featured</button>
+                        </form>
                 
                     </div>
                 </td>    

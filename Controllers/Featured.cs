@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameForge.Controllers
 {
-    public class TrendingController : Controller
+    public class FeaturedController : Controller
     {
         private readonly GameForgeContext _context;
         
         private readonly UserManager<User> _userManager;
 
-        public TrendingController(GameForgeContext context, UserManager<User> userManager)
+        public FeaturedController(GameForgeContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -38,20 +38,33 @@ namespace GameForge.Controllers
             //     .Include(l => l.Reviews)
             //     .ToListAsync())
             //     .Where(l => l.AverageRating > 3.9);
-            var userGames = (await _context.Game
-            .Include(l => l.Reviews)
-            .ToListAsync()) // Include related reviews
-            .Where(l => l.AverageRating >= 0) // Optional: Filter out games with no rating or invalid data
-            .OrderByDescending(l => l.AverageRating) // Sort by rating in descending order
-            .Take(3); // Take the top 3 games
+            var userGames = await _context.FeaturedGames
+            .Include(l => l.game)
+            .ToListAsync();
 
 
             if (userGames == null || !userGames.Any())
             {
-                return NotFound($"No games is Trending");
+                return View("Empty");
             }
 
             return View(userGames);
+        }
+        // Remove Game from Cart
+        [HttpPost]
+        [Authorize(Roles = "Developer")]
+        public IActionResult RemoveFeatured(int FeaturedId)
+        {
+            var cart = _context.FeaturedGames
+            .FirstOrDefault(c => c.Id == FeaturedId);  // Only CartID
+
+            if (cart != null)
+            {
+                _context.FeaturedGames.Remove(cart);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -8,6 +8,6 @@ namespace GameForge.Models;
 public class Collectables
 {
     public int CollectableID { get; set; } // Unique identifier for the collection
-    public int UserID { get; set; } // ID of the user who owns the collectables
+    public string? UserID { get; set; } // ID of the user who owns the collectables
     public decimal TotalCollectables {get;set;}=0;
 }

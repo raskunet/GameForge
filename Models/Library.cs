@@ -12,7 +12,7 @@ public class Library
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int LibraryID {get;set;}
-    public int UserID { get; set; } // ID of the user who owns the collectables
+    public string? UserID { get; set; } // ID of the user who owns the collectables
     public int GameId {get;set;}
     public Game? game{get;set;}
     public DateTime LibraryCreationDate { get; set; } = DateTime.Now; // Date the library was created

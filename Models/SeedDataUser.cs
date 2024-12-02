@@ -165,42 +165,42 @@
 //                     new Review { GameId = games[4].Id, UserId = playerTwo.Id, Rating = 5, Comment = "The best racing game out there!", CreatedAt = DateTime.UtcNow }
 //                 };
 
-                context.Review.AddRange(reviews);
-                context.SaveChanges();
+//                 context.Review.AddRange(reviews);
+//                 context.SaveChanges();
 
-                var libraris = new[]
-                {
-                    new Library { GameId = games[1].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
-                    new Library { GameId = games[0].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
-                    new Library { GameId = games[2].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow }
-                };
+//                 var libraris = new[]
+//                 {
+//                     new Library { GameId = games[1].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
+//                     new Library { GameId = games[0].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
+//                     new Library { GameId = games[2].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow }
+//                 };
 
-                context.Libraries.AddRange(libraris);
-                context.SaveChanges();
+//                 context.Libraries.AddRange(libraris);
+//                 context.SaveChanges();
 
-                var Carts = new[]
-                {
-                    new Cart { GameId = games[4].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false },
-                    new Cart { GameId = games[0].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false }
-                };
+//                 var Carts = new[]
+//                 {
+//                     new Cart { GameId = games[4].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false },
+//                     new Cart { GameId = games[0].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false }
+//                 };
 
-                context.Cart.AddRange(Carts);
-                context.SaveChanges();
+//                 context.Cart.AddRange(Carts);
+//                 context.SaveChanges();
 
-                var Collectablis = new[]
-                {
-                    new Collectables {  UserID = playerOne.Id,TotalCollectables=300}
-                };
+//                 var Collectablis = new[]
+//                 {
+//                     new Collectables {  UserID = playerOne.Id,TotalCollectables=300}
+//                 };
 
-                context.Collectables.AddRange(Collectablis);
-                context.SaveChanges();
+//                 context.Collectables.AddRange(Collectablis);
+//                 context.SaveChanges();
                 
 
 
-            }
-        }
-    }
-}
+//             }
+//         }
+//     }
+// }
 //                 context.Review.AddRange(reviews);
 //                 context.SaveChanges();
 //             }

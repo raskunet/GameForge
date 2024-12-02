@@ -269,7 +269,37 @@ namespace GameForge.Controllers
 
             return View(viewModel);
         }
+         [HttpPost]
+        public async Task<IActionResult> AddToFeatured(int id)
+        {
+            var userId = await GetCurrentDeveloperIdAsync();
+            if (userId == null) return Unauthorized();
 
+            var game = await _context.Game.FindAsync(id);
+            if (game == null) return NotFound();
+
+            // Check if the game is already in the user's cart
+            var existingCartItem = _context.FeaturedGames.FirstOrDefault(c => c.GameID == id && c.UserID == userId);
+            if (existingCartItem != null)
+            {
+                TempData["Message"] = "This game is already Featured";
+                return RedirectToAction("Index","Featured");
+            }
+        
+            // Add the game to the cart
+            var featuredItem = new Featured
+            {
+                UserID = userId,
+                GameID = id,
+                FeaturingStartDate = DateTime.UtcNow // Add this field to the Cart model if not already present
+            };
+
+            _context.FeaturedGames.Add(featuredItem);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Game added to Featured!";
+            return RedirectToAction("Index","Featured");
+        }
 
 
         // [HttpPost]

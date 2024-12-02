@@ -50,7 +50,7 @@ namespace GameForge.Models
         }
 
         [Required]  // Ensures that every game is linked to a developer
-        public string DeveloperId { get; set; }
+        public string? DeveloperId { get; set; }
 
         // Navigation property to Developer
         public Developer? Developer { get; set; }

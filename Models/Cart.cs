@@ -10,7 +10,7 @@ public class Cart
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CartID { get; set; } // Unique identifier for the cart
-    public int UserID { get; set; }
+    public string? UserID { get; set; }
     public int GameId { get; set; }  // List of items in the cart
     public Game? game{get;set;}
     public DateTime CreationDate { get; set; } = DateTime.Now; // Cart creation time
@@ -20,7 +20,7 @@ public class Cart
 
 public class CartViewModel
 {
-    public List<Cart> CartItems { get; set; }
+    public List<Cart>? CartItems { get; set; }
     public decimal TotalPrice { get; set; }
     public decimal TotalCollectables{get;set;}=0;
 }
