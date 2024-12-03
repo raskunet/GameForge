@@ -3,76 +3,101 @@
 // using GameForge.Data;
 // using System;
 // using System.Linq;
+// using Microsoft.AspNetCore.Identity;
+// using GameForge.Models;
 
-// namespace GameForge.Models
+// public static class SeedData
 // {
-//     public static class SeedDataUser
+//     public static void Initialize(IServiceProvider serviceProvider)
 //     {
-//         public static void Initialize(IServiceProvider serviceProvider)
+//         using (var context = new GameForgeContext(
+//             serviceProvider.GetRequiredService<DbContextOptions<GameForgeContext>>()))
 //         {
-//             // Look for any Users
-//             using (var context = new GameForgeContext(
-//                 serviceProvider.GetRequiredService<DbContextOptions<GameForgeContext>>()))
+//             // Ensure database is clean if reseeding
+//             if (context.Game.Any())
 //             {
-//                 // Check if the database has been seeded
-//                 if (context.User.Any())
-//                 {
-//                     // Clear previous data if you want to reseed the database
-//                     // context.Game.RemoveRange(context.Game);
-//                     // context.Purchase.RemoveRange(context.Purchase);
-//                     // context.Review.RemoveRange(context.Review);
-//                     // context.User.RemoveRange(context.User);
-//                     // context.SaveChanges();
-//                     return;
-//                 }
-
-
-//                 var playerOne = new User
-//                 {
-//                     Id = 1,
-//                     Username = "PlayerOne",
-//                     Email = "playerone@example.com",
-//                     PasswordHash = "hashedpassword3",
-//                     CreationDate=DateTime.UtcNow
-//                 };
-
-//                 var playerTwo = new User
-//                 {
-//                     Id = 2,
-//                     Username = "PlayerTwo",
-//                     Email = "playertwo@example.com",
-//                     PasswordHash = "hashedpassword4",
-//                     CreationDate=DateTime.UtcNow
-//                 };
-//                 // Seed Developers
-//                 var developers = new[]
-//                 {
-//                     new Developer
-//                     {
-//                         Id = 3,
-//                         Username = "DevOne",
-//                         Email = "devone@example.com",
-//                         PasswordHash = "hashedpassword1",
-//                         CreationDate=DateTime.UtcNow
-//                     },
-//                     new Developer
-//                     {
-//                         Id = 4,
-//                         Username = "DevTwo",
-//                         Email = "devtwo@example.com",
-//                         PasswordHash = "hashedpassword2",
-//                         CreationDate=DateTime.UtcNow
-//                     }
-//                 };
-
-//                 context.User.AddRange(developers);
+//                 context.Game.RemoveRange(context.Game);
+//                 context.Purchase.RemoveRange(context.Purchase);
+//                 context.Review.RemoveRange(context.Review);
+//                 context.Users.RemoveRange(context.Users);
 //                 context.SaveChanges();
+//             }
 
-//                 var devOne = context.User.OfType<Developer>().First(d => d.Username == "DevOne");
-//                 var devTwo = context.User.OfType<Developer>().First(d => d.Username == "DevTwo");
+//             // Create roles
+//             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//             var roles = new[] { "Developer", "User" };
 
-//                 // Seed Games with Developer IDs
-//                 var games = new[]
+//             foreach (var role in roles)
+//             {
+//                 if (!roleManager.RoleExistsAsync(role).Result)
+//                 {
+//                     roleManager.CreateAsync(new IdentityRole(role)).Wait();
+//                 }
+//             }
+
+//             // Seed Users
+//             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
+//             var developers = new[]
+//             {
+//                 new User
+//                 {
+//                     UserName = "DevOne",
+//                     Email = "devone@example.com",
+//                     IsDeveloper = true
+//                 },
+//                 new User
+//                 {
+//                     UserName = "DevTwo",
+//                     Email = "devtwo@example.com",
+//                     IsDeveloper = true
+//                 }
+//             };
+
+//             var players = new[]
+//             {
+//                 new User
+//                 {
+//                     UserName = "PlayerOne",
+//                     Email = "playerone@example.com",
+//                     IsDeveloper = false
+//                 },
+//                 new User
+//                 {
+//                     UserName = "PlayerTwo",
+//                     Email = "playertwo@example.com",
+//                     IsDeveloper = false
+//                 }
+//             };
+
+//             // Add developers and users
+//             foreach (var dev in developers)
+//             {
+//                 var result = userManager.CreateAsync(dev, "Password123!").Result;
+//                 if (result.Succeeded)
+//                 {
+//                     userManager.AddToRoleAsync(dev, "Developer").Wait();
+//                 }
+//             }
+
+//             foreach (var player in players)
+//             {
+//                 var result = userManager.CreateAsync(player, "Password123!").Result;
+//                 if (result.Succeeded)
+//                 {
+//                     userManager.AddToRoleAsync(player, "User").Wait();
+//                 }
+//             }
+
+//             context.SaveChanges();
+
+//             // Fetch seeded users by role
+//             var devOne = userManager.FindByNameAsync("DevOne").Result;
+//             var devTwo = userManager.FindByNameAsync("DevTwo").Result;
+//             var playerOne = userManager.FindByNameAsync("PlayerOne").Result;
+//             var playerTwo = userManager.FindByNameAsync("PlayerTwo").Result;
+
+//             var games = new[]
 //                 {
 //                     new Game
 //                     {
@@ -90,7 +115,7 @@
 //                         Title = "Space Wars: Galaxy Battles",
 //                         Description = "A futuristic space combat game with stunning visuals.",
 //                         ImageUrl = "/images/space_wars.jpg",
-//                         ReleaseDate = DateTime.UtcNow,
+//                         ReleaseDate = DateTime.UtcNow,           
 //                         Price = 59.99M,
 //                         Category = "Action",
 //                         GameplayLink = "https://www.youtube.com/watch?v=space_wars_gameplay",
@@ -130,80 +155,32 @@
 //                         DeveloperId = devTwo.Id
 //                     }
 //                 };
+//             context.Game.AddRange(games);
+//             context.SaveChanges();
 
-//                 context.Game.AddRange(games);
-//                 context.SaveChanges();
+//             // Seed Purchases
+//             var purchases = new[]
+//             {
+//                 new Purchase { GameId = games[0].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow, PricePaid = 20 },
+//                 new Purchase { GameId = games[1].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow, PricePaid = 30 },
+//                 new Purchase { GameId = games[3].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow, PricePaid = 40 },
+//                 new Purchase { GameId = games[4].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow, PricePaid = 50 }
+//             };
 
+//             context.Purchase.AddRange(purchases);
+//             context.SaveChanges();
 
+//             // Seed Reviews
+//             var reviews = new[]
+//             {
+//                 new Review { GameId = games[0].Id, UserId = playerTwo.Id, Rating = 4, Comment = "Good game!" },
+//                 new Review { GameId = games[1].Id, UserId = playerOne.Id, Rating = 5, Comment = "Fantastic gameplay!" },
+//                 new Review { GameId = games[2].Id, UserId = playerTwo.Id, Rating = 3, Comment = "Could be better." },
+//                 new Review { GameId = games[3].Id, UserId = playerTwo.Id, Rating = 4, Comment = "Very creative!" }
+//             };
 
-//                 context.User.AddRange(playerOne, playerTwo);
-//                 context.SaveChanges();
-
-//                 var purchases = new[]
-//                 {
-//                     new Purchase { GameId = games[0].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow },
-//                     new Purchase { GameId = games[1].Id, UserId = playerOne.Id, PurchaseDate = DateTime.UtcNow },
-
-//                     new Purchase { GameId = games[0].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
-//                     new Purchase { GameId = games[1].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
-//                     new Purchase { GameId = games[2].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
-//                     new Purchase { GameId = games[3].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow },
-//                     new Purchase { GameId = games[4].Id, UserId = playerTwo.Id, PurchaseDate = DateTime.UtcNow }
-//                 };
-
-//                 context.Purchase.AddRange(purchases);
-//                 context.SaveChanges();
-
-//                 // Seed Reviews (PlayerTwo has reviewed all games)
-//                 var reviews = new[]
-//                 {
-//                     new Review { GameId = games[1].Id, UserId = playerOne.Id, Rating = 1, Comment = "Pretty farig game!", CreatedAt = DateTime.UtcNow },
-//                     new Review { GameId = games[0].Id, UserId = playerTwo.Id, Rating = 4, Comment = "Pretty good game!", CreatedAt = DateTime.UtcNow },
-//                     new Review { GameId = games[1].Id, UserId = playerTwo.Id, Rating = 5, Comment = "Fantastic gameplay!", CreatedAt = DateTime.UtcNow },
-//                     new Review { GameId = games[2].Id, UserId = playerTwo.Id, Rating = 3, Comment = "Good but could be better.", CreatedAt = DateTime.UtcNow },
-//                     new Review { GameId = games[3].Id, UserId = playerTwo.Id, Rating = 4, Comment = "Very creative!", CreatedAt = DateTime.UtcNow },
-//                     new Review { GameId = games[4].Id, UserId = playerTwo.Id, Rating = 5, Comment = "The best racing game out there!", CreatedAt = DateTime.UtcNow }
-//                 };
-
-//                 context.Review.AddRange(reviews);
-//                 context.SaveChanges();
-
-//                 var libraris = new[]
-//                 {
-//                     new Library { GameId = games[1].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
-//                     new Library { GameId = games[0].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow },
-//                     new Library { GameId = games[2].Id, UserID = playerOne.Id,LibraryCreationDate = DateTime.UtcNow }
-//                 };
-
-//                 context.Libraries.AddRange(libraris);
-//                 context.SaveChanges();
-
-//                 var Carts = new[]
-//                 {
-//                     new Cart { GameId = games[4].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false },
-//                     new Cart { GameId = games[0].Id, UserID = playerOne.Id,CreationDate=DateTime.UtcNow,IsCheckedOut=false }
-//                 };
-
-//                 context.Cart.AddRange(Carts);
-//                 context.SaveChanges();
-
-//                 var Collectablis = new[]
-//                 {
-//                     new Collectables {  UserID = playerOne.Id,TotalCollectables=300}
-//                 };
-
-//                 context.Collectables.AddRange(Collectablis);
-//                 context.SaveChanges();
-                
-
-
-//             }
-//         }
-//     }
-// }
-//                 context.Review.AddRange(reviews);
-//                 context.SaveChanges();
-//             }
+//             context.Review.AddRange(reviews);
+//             context.SaveChanges();
 //         }
 //     }
 // }

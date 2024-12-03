@@ -33,7 +33,7 @@ namespace GameForge.Controllers
             {
                 return Problem("Entity set 'GameForgeContext.Game' is null.");
             }
-
+            var userId = await GetCurrentUserIdAsync();
 
             // Use LINQ to get list of categories.
             IQueryable<string> categoryQuery = from g in _context.Game
@@ -54,12 +54,15 @@ namespace GameForge.Controllers
             {
                 games = games.Where(x => x.Category == gameCategory);
             }
-
+            var collectables = _context.Wallets
+            .FirstOrDefault(c => c.UserID == userId);
+            var totalCollectables = collectables?.TotalAmount ?? 100;
             // Creating the ViewModel for search/filter
             var gameCategoryVM = new GameCategoryViewModel
             {
                 Categories = new SelectList(await categoryQuery.Distinct().ToListAsync()),
-                Games = await games.ToListAsync()
+                Games = await games.ToListAsync(),
+                Total=totalCollectables
             };
 
             return View(gameCategoryVM);
@@ -88,7 +91,7 @@ namespace GameForge.Controllers
             ViewData["CurrentUserId"] = userId;
 
             // Check if the user has purchased the game
-            bool hasPurchased = _context.Purchase.Any(p => p.GameId == id && p.UserId == userId);
+            bool hasPurchased = _context.Libraries.Any(p => p.GameId == id && p.UserID == userId);
             ViewData["PurchaseCond"] = hasPurchased;
 
             return View(game);
@@ -131,41 +134,43 @@ namespace GameForge.Controllers
             _context.Cart.Add(cartItem);
             await _context.SaveChangesAsync();
 
+            var existingWalletUser = _context.Wallets.FirstOrDefault(p => p.UserID == userId);
+            if(existingWalletUser == null)
+            {
+                var New1 = new Wallet
+                {
+                    UserID = userId,
+                    TotalAmount=100
+                };
+                _context.Wallets.Add(New1);
+            }
+            await _context.SaveChangesAsync();
 
             
-            // Check if the user already purchased the game
-            var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == id && p.UserId == userId);
-            if (existingPurchase != null)
-            {
-                var purchase = new Purchase
-                {
-                    UserId = userId,
-                    GameId = id,
-                    PurchaseDate = DateTime.UtcNow,
-                    PricePaid = game.PriceAfterDiscount
-                };
-                TempData["Message"] = "You already own this game!";
-                return RedirectToAction(nameof(Details), new { id });
-            }
+            // // Check if the user already purchased the game
+            // var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == id && p.UserId == userId);
+            // if (existingPurchase != null)
+            // {
+            //     var purchase = new Purchase
+            //     {
+            //         UserId = userId,
+            //         GameId = id,
+            //         PurchaseDate = DateTime.UtcNow,
+            //         PricePaid = game.PriceAfterDiscount
+            //     };
+            //      _context.Purchase.Add(purchase);
+            //     await _context.SaveChangesAsync();
+            //     // TempData["Message"] = "You already own this game!";
+            //     // return RedirectToAction(nameof(Details), new { id });
 
-            // Create a new purchase
-            var purchase = new Purchase
-            {
-                UserId = userId,
-                GameId = id,
-                PurchaseDate = DateTime.UtcNow,
-        
+            //      TempData["Message"] = "Game added to your cart!";
+                
+            // }
 
-
-                PricePaid = game.PriceAfterDiscount
-            };
-
-                _context.Purchase.Add(purchase);
-                await _context.SaveChangesAsync();
-            }
-
-            TempData["Message"] = "Game added to your cart!";
             return RedirectToAction("Index","Cart");
+            
+
+           
         }
          [HttpPost]
         public async Task<IActionResult> AddToWishlist(int id)

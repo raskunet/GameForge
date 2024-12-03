@@ -4,7 +4,11 @@
     ViewData["Title"] = "Games";
 }
 
-<h1>Games</h1>
+<h1>Games
+    <div class="collectables-info">
+        <p><strong>Wallet :</strong> @Model.Total</p>
+    </div>
+</h1>
 
 <!-- Search and Filter Form -->
 <form asp-controller="Games" asp-action="Index" method="get">

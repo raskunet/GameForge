@@ -575,6 +575,25 @@ namespace GameForge.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("GameForge.Models.Wallet", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("UserID")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Wallets");
+                });
+
             modelBuilder.Entity("GameForge.Models.Wishlist", b =>
                 {
                     b.Property<int>("WishlistID")

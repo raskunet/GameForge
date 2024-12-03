@@ -47,10 +47,10 @@ public class CartController : Controller
         var totalPrice = cartItems.Sum(item => item.game != null ? item.game.Price : 0);
 
         // Get TotalCollectables from the Collectables table for this user
-        var collectables = _context.Collectables
+        var collectables = _context.Wallets
         .FirstOrDefault(c => c.UserID == userId);
 
-        var totalCollectables = collectables?.TotalCollectables ?? 1000;
+        var totalCollectables = collectables?.TotalAmount ?? 1000;
 
         if (cart == null)
         {
@@ -83,21 +83,6 @@ public class CartController : Controller
         return RedirectToAction("Index");
     }
 
-    // // Checkout Cart
-    // [HttpPost]
-    // public IActionResult Checkout()
-    // {
-    //     var userId = 1; // Replace with proper user identification method
-    //     var cart = _context.Cart.Where(c => c.UserID == userId && !c.IsCheckedOut).ToList();
-
-    //     foreach (var item in cart)
-    //     {
-    //         item.IsCheckedOut = true;  // Mark cart as checked out
-    //     }
-
-    //     _context.SaveChanges();
-    //     return View("CheckoutConfirmation");
-    // }
     [HttpPost]
     public async Task<IActionResult> Checkout()
     {
@@ -113,12 +98,12 @@ public class CartController : Controller
             return RedirectToAction("EmptyCart");
         }
         // Redirect to the checkout confirmation view
-        var totalPrice = cartItems.Sum(item => item.game.Price);
+        var totalPrice = cartItems.Sum(item => item.game.PriceAfterDiscount);
         // Get TotalCollectables from the Collectables table for this user
-        var collectables = _context.Collectables
+        var collectables = _context.Wallets
         .FirstOrDefault(c => c.UserID == userId);
 
-        var totalCollectables = collectables?.TotalCollectables ?? 1000;
+        var totalCollectables = collectables?.TotalAmount ?? 1000;
         if (totalPrice > totalCollectables)
         {
             return BadRequest("Not enough creds");
@@ -126,7 +111,7 @@ public class CartController : Controller
          // Deduct the total price from the user's collectables
         if (collectables != null)
         {
-            collectables.TotalCollectables -= totalPrice;
+            collectables.TotalAmount -= totalPrice;
         }
         // Add games to the user's library
         foreach (var item in cartItems)
@@ -140,16 +125,49 @@ public class CartController : Controller
 
             _context.Libraries.Add(libraryEntry);
         }
-
+        decimal totalC=0;
         // Mark the cart as checked out
         foreach (var item in cartItems)
         {
             item.IsCheckedOut = true;
+            totalC+=100;
         }
 
-        _context.SaveChanges();
+        // _context.SaveChanges();
 
+        foreach (var item in cartItems)
+        {
+            // Check if the user already purchased the game
+            var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == item.GameId && p.UserId == userId);
+            if (existingPurchase == null)
+            {
+                var purchase = new Purchase
+                {
+                    UserId = userId,
+                    GameId = item.GameId,
+                    PurchaseDate = DateTime.UtcNow,
+                    PricePaid = item.game.PriceAfterDiscount
+                };
+                _context.Purchase.Add(purchase);
+            }
+                
+        }
+        var existingCollectableUser = _context.Collectables.FirstOrDefault(p => p.UserID == userId);
+        if(existingCollectableUser == null)
+        {
+            var New = new Collectables
+            {
+                UserID = userId,
+                TotalCollectables=0
+            };
+            _context.Collectables.Add(New);
+        }
+        _context.SaveChanges();
         
+        var collectable = _context.Collectables.FirstOrDefault(c => c.UserID == userId);
+        collectable.TotalCollectables+=totalC;
+
+        _context.SaveChanges();
         var viewModel = new CartViewModel
         {
             CartItems = cartItems,

@@ -18,3 +18,9 @@ public class Library
     public DateTime LibraryCreationDate { get; set; } = DateTime.Now; // Date the library was created
     public User? User { get; set; }
 }
+
+public class LibraryViewModel
+{
+    public List<Library>? Items { get; set; }
+    public decimal TotalCollectables{get;set;}=0;
+}

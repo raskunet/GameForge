@@ -37,8 +37,14 @@ namespace GameForge.Controllers
             {
                 return View("Empty");
             }
-
-            return View(userGames);
+            var collectables = _context.Collectables
+            .FirstOrDefault(c => c.UserID == userId);
+            var returnGames = new LibraryViewModel
+            {
+                Items=userGames,
+                TotalCollectables=collectables.TotalCollectables
+            }; 
+            return View(returnGames);
         }
     }
 }

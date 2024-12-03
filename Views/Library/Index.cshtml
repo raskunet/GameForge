@@ -1,7 +1,10 @@
-@model IEnumerable<GameForge.Models.Library>
+@model GameForge.Models.LibraryViewModel
 
-<h2>Downloaded Games</h2>
-
+<h2>Downloaded Games
+    <div class="collectables-info">
+        <p><strong>Total Collectables :</strong> @Model.TotalCollectables</p>
+    </div>
+</h2>
 <table class="table">
     <thead>
         <tr>
@@ -10,7 +13,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var library in Model)
+        @foreach (var library in Model.Items)
         {
             <tr>
                 <td>@library.game?.Title</td>

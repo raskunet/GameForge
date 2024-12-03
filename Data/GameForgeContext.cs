@@ -71,6 +71,7 @@ namespace GameForge.Data
         public DbSet<Collectables> Collectables{ get; set; } = default!;
         public DbSet<Library> Libraries{ get; set; } = default!;
         public DbSet<Wishlist> Wishlist{ get; set; } = default!;
+        public DbSet<Wallet> Wallets{ get; set; } = default!;
         
         public DbSet<Game> Game { get; set; } = default!;
         public DbSet<GameProblem> GameProblems { get; set; } = default!;
