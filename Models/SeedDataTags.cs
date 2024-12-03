@@ -21,21 +21,25 @@ public static class SeedDataTag
                 return;   // DB has been seeded
             }
             context.ThreadTags.AddRange(
-                new ThreadTag{
-                    TagName="Game Development",
-                    CreationDate=DateTime.UtcNow
+                new ThreadTag
+                {
+                    TagName = "Game Development",
+                    CreationDate = DateTime.UtcNow
                 },
-                new ThreadTag{
-                    TagName="Game Discussion",
-                    CreationDate=DateTime.UtcNow
+                new ThreadTag
+                {
+                    TagName = "Game Discussion",
+                    CreationDate = DateTime.UtcNow
                 },
-                new ThreadTag{
-                    TagName="Game Updates/Patches",
-                    CreationDate=DateTime.UtcNow
+                new ThreadTag
+                {
+                    TagName = "Game Updates/Patches",
+                    CreationDate = DateTime.UtcNow
                 },
-                new ThreadTag{
-                    TagName="fAB Theories",
-                    CreationDate=DateTime.UtcNow
+                new ThreadTag
+                {
+                    TagName = "fAB Theories",
+                    CreationDate = DateTime.UtcNow
                 }
             );
             context.SaveChanges();

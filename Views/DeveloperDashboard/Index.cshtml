@@ -70,6 +70,7 @@
                         <button type="submit" class="btn btn-primary">Featured</button>
                         </form>
                 
+                         @Html.ActionLink("View Reported Issues","Index","GameProblem",new {GameID=@game.Id},new {@class="btn btn-secondary btn-sm"})
                     </div>
                 </td>    
             </tr>

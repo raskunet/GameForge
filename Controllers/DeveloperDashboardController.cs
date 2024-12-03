@@ -9,7 +9,7 @@ using NuGet.Common;
 namespace GameForge.Controllers
 {
     [Authorize(Roles = "Developer")]
-        
+
     public class DeveloperDashboardController : Controller
     {
         private readonly GameForgeContext _context;
@@ -22,20 +22,20 @@ namespace GameForge.Controllers
         }
         private async Task<bool> TESTDEVAsync()
         {
-        var user = await _userManager.GetUserAsync(User);
-            
+            var user = await _userManager.GetUserAsync(User);
+
             bool Role = User.IsInRole("Developer");
-            
-            
+
+
             return Role;
-        
+
         }
         private async Task<string> GetCurrentDeveloperIdAsync()
         {
 
 
             var user = await _userManager.GetUserAsync(User);
-            
+
             return user.Id;
             // if (user is Developer developer)
             //     return developer.Id;
@@ -44,15 +44,15 @@ namespace GameForge.Controllers
         }
 
 
-        
+
         // GET: DeveloperDashboard
         public async Task<IActionResult> Index()
         {
-            var role= await TESTDEVAsync();
-            if (role== false) return Unauthorized();
-            
+            var role = await TESTDEVAsync();
+            if (role == false) return Unauthorized();
+
             var developerId = await GetCurrentDeveloperIdAsync();
-            Console.WriteLine("ye dev id ha bhai {0}",developerId);
+            Console.WriteLine("ye dev id ha bhai {0}", developerId);
             //if (developerId == null) return Unauthorized();
             var games = await _context.Game
                 .Where(g => g.DeveloperId == developerId)
@@ -93,13 +93,13 @@ namespace GameForge.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-       
+
 
         // GET: DeveloperDashboard/Create
         public async Task<IActionResult> Create()
         {
-            var developerId = await GetCurrentDeveloperIdAsync(); 
-            ViewData["DeveloperId"] = developerId; 
+            var developerId = await GetCurrentDeveloperIdAsync();
+            ViewData["DeveloperId"] = developerId;
             return View();
         }
 
@@ -111,25 +111,21 @@ namespace GameForge.Controllers
             var developerId = await GetCurrentDeveloperIdAsync();
             if (ModelState.IsValid)
             {
-                
+                if (game.ReleaseDate.Kind == DateTimeKind.Unspecified)
+                {
+                    game.ReleaseDate = DateTime.SpecifyKind(game.ReleaseDate, DateTimeKind.Utc);
+                }
+                else if (game.ReleaseDate.Kind == DateTimeKind.Local)
+                {
+                    game.ReleaseDate = game.ReleaseDate.ToUniversalTime();
+                }
                 game.DeveloperId = developerId;
-                game.ReleaseDate=DateTime.UtcNow;
-                // var cgame=new Game({
-                //     Title=Igame.Title,
-                //     Price=Igame.Price,
-                //     Description=Igame.Description,
-                //     ReleaseDate=DateTime.UtcNow,
-                //     DiscountPercentage=Igame.DiscountPercentage,
-                //     IsPaid=Igame.IsPaid,
-                //     ImageUrl=Igame.ImageUrl
-                // });
-
                 _context.Game.Add(game);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
-            else 
+            else
             {
                 var errors = ModelState
                 .Where(ms => ms.Value.Errors.Count > 0)
@@ -153,7 +149,7 @@ namespace GameForge.Controllers
                 .Where(g => g.Id == id && g.DeveloperId == developerId)
                 .FirstOrDefaultAsync();
 
-            if (game == null) 
+            if (game == null)
             {
                 TempData["ErrorMessage"] = "You are not authorized to edit this game.";
                 return RedirectToAction("Index"); // Redirect if unauthorized
@@ -170,7 +166,7 @@ namespace GameForge.Controllers
             var developerId = await GetCurrentDeveloperIdAsync();
 
             // Check if game belongs to the developer
-            if (id != game.Id || game.DeveloperId != developerId) 
+            if (id != game.Id || game.DeveloperId != developerId)
             {
                 TempData["ErrorMessage"] = "You are not authorized to edit this game.";
                 return RedirectToAction("Index"); // Redirect if unauthorized
@@ -180,6 +176,14 @@ namespace GameForge.Controllers
             {
                 try
                 {
+                    if (game.ReleaseDate.Kind == DateTimeKind.Unspecified)
+                    {
+                        game.ReleaseDate = DateTime.SpecifyKind(game.ReleaseDate, DateTimeKind.Utc);
+                    }
+                    else if (game.ReleaseDate.Kind == DateTimeKind.Local)
+                    {
+                        game.ReleaseDate = game.ReleaseDate.ToUniversalTime();
+                    }
                     _context.Update(game);
                     await _context.SaveChangesAsync();
                 }
@@ -333,7 +337,7 @@ namespace GameForge.Controllers
 
 
 
-        
+
 
 
         private bool GameExists(int id)

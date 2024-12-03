@@ -55,7 +55,8 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Create(int GameID)
         {
             var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == GameID);
-            if (game == null) {
+            if (game == null)
+            {
                 return NotFound();
             }
             var gameProblemCreateVM = new GameProblemCreateVM
@@ -74,13 +75,15 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userID=await GetCurrentUserIdAsync();
+                var userID = await GetCurrentUserIdAsync();
                 var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
-                if (user == null) {
+                if (user == null)
+                {
                     return NotFound();
                 }
                 var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == gameProblemVM.GameID);
-                if (game == null) {
+                if (game == null)
+                {
                     return NotFound();
                 }
                 var gameProblem = new GameProblem
@@ -89,11 +92,11 @@ namespace GameForge.Controllers
                     User = user,
                     Title = gameProblemVM.ProblemTitle,
                     ProblemDescription = gameProblemVM.ProblemDescription,
-                    CreationDate=DateTime.UtcNow
+                    CreationDate = DateTime.UtcNow
                 };
                 _context.Add(gameProblem);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index","Games");
+                return RedirectToAction("Index", "Games");
             }
             return View(gameProblemVM);
         }

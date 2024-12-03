@@ -1,49 +1,81 @@
 @model GameForge.Models.GameProblemCreateVM
 
-@{
-    Layout = null;
-}
+<h1 class="text-center text-primary mb-4">Create Game Problem</h1>
+<hr class="mb-5" />
 
-<!DOCTYPE html>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-action="Create" class="p-4 border rounded shadow-sm bg-light">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
-</head>
-<body>
+                <!-- Hidden Inputs -->
+                <input type="hidden" asp-for="UserID">
+                <input type="hidden" asp-for="GameID">
 
-<h4>GameProblem</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="UserID">
-            <input type="hidden" asp-for="GameID">
-            <div class="form-group">
-                <label asp-for="ProblemTitle" class="control-label"></label>
-                <input asp-for="ProblemTitle" class="form-control" />
-                <span asp-validation-for="ProblemTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProblemDescription" class="control-label"></label>
-                <input asp-for="ProblemDescription" class="form-control" />
-                <span asp-validation-for="ProblemDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                <!-- Problem Title -->
+                <div class="mb-3">
+                    <label asp-for="ProblemTitle" class="form-label fw-bold">Problem Title</label>
+                    <input asp-for="ProblemTitle" class="form-control" placeholder="Enter a concise title" />
+                    <span asp-validation-for="ProblemTitle" class="text-danger"></span>
+                </div>
+
+                <!-- Problem Description -->
+                <div class="mb-4">
+                    <label asp-for="ProblemDescription" class="form-label fw-bold">Problem Description</label>
+                    <textarea asp-for="ProblemDescription" class="form-control" rows="5"
+                        placeholder="Describe the problem in detail"></textarea>
+                    <span asp-validation-for="ProblemDescription" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle-fill"></i> Create
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center mt-4">
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
 </div>
+
+@section Styles {
+    <style>
+        /* Centered heading styles */
+        h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Form container styling */
+        .form-control {
+            border-radius: 5px;
+        }
+
+        /* Button hover effects */
+        .btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Card-like form appearance */
+        form {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+}
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-</body>
-</html>

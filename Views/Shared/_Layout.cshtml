@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GameForge.styles.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
     <header>
@@ -55,6 +57,30 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Featured" asp-action="Index">Featured</a>
                         </li>
+                             <a class="nav-link text-dark" href="/Games" >Games</a>
+                        </li>
+                        <li class="nav-item">
+                             <a class="nav-link text-dark" href="/DeveloperDashboard" >DeveloperDashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Identity/Account/Login" >Login</a>
+                        </li>
+                        @using Microsoft.AspNetCore.Identity
+                        @inject UserManager<User> UserManager
+                        @inject RoleManager<IdentityRole> RoleManager
+                        <li class="nav-leftitem">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var user = await UserManager.GetUserAsync(User);
+                                var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+                                <span class="nav-link">Welcome, @User.Identity.Name! as @(roles.Count > 0 ? string.Join(", ", roles) : "No Role")</span>
+                            }
+                            else
+                            {
+                                <span class="nav-link">Welcome, Guest!</span>
+                            }
+                        </li>
+
                     </ul>
                 </div>
             </div>

@@ -29,12 +29,12 @@ namespace GameForge.Controllers
         }
 
         // GET:     Reviews/Create
-        
+
         public async Task<IActionResult> Create(int gameId)
         {
             var userId = await GetCurrentUserIdAsync();
-            ViewData["UId"] = userId; 
-            Console.WriteLine("ye user id ha bhai {0}",userId);
+            ViewData["UId"] = userId;
+            Console.WriteLine("ye user id ha bhai {0}", userId);
             // Check if the user has purchased the game
             bool hasPurchased = _context.Purchase
                 .Any(p => p.GameId == gameId && p.UserId == userId);
@@ -79,7 +79,7 @@ namespace GameForge.Controllers
                 .Select(ms => new { ms.Key, ms.Value.Errors })
                 .ToList();
 
-                return BadRequest(errors);
+            return BadRequest(errors);
         }
 
 
@@ -91,9 +91,9 @@ namespace GameForge.Controllers
                 return NotFound();
             }
 
-            
+
             var userId = await GetCurrentUserIdAsync();
-            
+
             var review = await _context.Review.FindAsync(id);
             if (review == null)
             {
@@ -120,7 +120,7 @@ namespace GameForge.Controllers
 
             // Assuming user is hardcoded for now
             var userId = await GetCurrentUserIdAsync();
-            
+
             // Ensure the review belongs to the current user
             var existingReview = await _context.Review.AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId);
@@ -162,7 +162,7 @@ namespace GameForge.Controllers
         {
             // Assuming user is hardcoded for now
             var userId = await GetCurrentUserIdAsync();
-            
+
             var review = await _context.Review.FindAsync(id);
             if (review == null)
             {

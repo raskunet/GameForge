@@ -18,7 +18,7 @@
         <select asp-for="ThreadTag" asp-items="Model.Tags">
             <option value="">All</option>
         </select>
-        <label>Title: <input type="text" asp-for="ThreadSearchString" /></label>
+        <label>Title: <input type="text" asp-for="ThreadSearchString" value="@ViewData["CurrentFilter"]" /></label>
         <input type="submit" value="Filter" />
     </p>
 </form>
@@ -31,13 +31,27 @@
             <thead class="table-primary">
                 <tr>
                     <th>Title</th>
-                    <th>Created On</th>
-                    <th>Replies</th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]"
+                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                            asp-route-currentTag="@ViewData["CurrentTag"]" class="text-light">
+                            Created On
+                            <i class="bi bi-arrow-up-down"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["NumRepliesSortParam"]"
+                            asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                            asp-route-currentTag="@ViewData["CurrentTag"]" class="text-light">
+                            Replies
+                            <i class="bi bi-arrow-up-down"></i>
+                        </a>
+                    </th>
                     <th>Posted By</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var thread in Model.ThreadTopics ?? Enumerable.Empty<ThreadTopic>())
+                @foreach (var thread in Model.ThreadTopics)
                     {
                         <tr>
                             <td>
@@ -46,7 +60,7 @@
                                     @thread.Title
                                 </a>
                             </td>
-                            <td>@thread.CreationDate.ToString("MM dd, yyyy")</td>
+                            <td>@thread.CreationDate.ToString("MMM d, yyyy")</td>
                             <td>@thread.NumberOfReplies</td>
                         </tr>
                     }
@@ -62,6 +76,25 @@
                 </td>
             </tr>
         }
+</div>
+
+
+<div class="d-flex justify-content-between mt-4">
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]"
+        asp-route-pageNumber="@(Model.ThreadTopics.PageIndex - 1)"
+        asp-route-currentFilter="@ViewData["CurrentFilter"]"
+        asp-route-currentTag="@ViewData["CurrentTag"]"
+        class="btn btn-secondary @(!Model.ThreadTopics.HasPreviousPage ? "disabled" : "")">
+        <i class="bi bi-arrow-left"></i> Previous
+    </a>
+
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]"
+        asp-route-pageNumber="@(Model.ThreadTopics.PageIndex + 1)"
+        asp-route-currentFilter="@ViewData["CurrentFilter"]"
+        asp-route-currentTag="@ViewData["CurrentTag"]"
+        class="btn btn-secondary @(!Model.ThreadTopics.HasNextPage ? "disabled" : "")">
+        Next <i class="bi bi-arrow-right"></i>
+    </a>
 </div>
 
 

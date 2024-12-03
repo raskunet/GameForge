@@ -13,7 +13,7 @@ public class Question
     public string AuthorID { get; set; }
     public string Title { get; set; } = string.Empty;
     public DateTime CreationDate { get; set; }
-    public DateTime LastEditTime{get;set;}
+    public DateTime LastEditTime { get; set; }
     public string QuestionText { get; set; } = string.Empty;
     public int Upvotes { get; set; }
     public int Downvotes { get; set; }
@@ -24,7 +24,7 @@ public class Question
 
     public ICollection<Answer> Answers { get; } = new List<Answer>();
     public ICollection<QuestionVote> QuestionVotes { get; } = new List<QuestionVote>();
-    public ICollection<AnswerVote> AnswerVotes{ get; } = new List<AnswerVote>();
+    public ICollection<AnswerVote> AnswerVotes { get; } = new List<AnswerVote>();
 
 }
 
@@ -32,7 +32,7 @@ public class Question
 public class QuestionPost
 {
     public required Question Question { get; set; }
-    public required bool AnswerFlag{ get; set; } 
+    public required bool AnswerFlag { get; set; }
     //public List<Answer> Answers { get; } = new List<Answer>();
 }
 
@@ -58,13 +58,13 @@ public class QuestionEditViewModel
 [NotMapped]
 public class QuestionVoteAction
 {
-    public int QuestionID{ get; set; }
-    public bool Type{ get; set; }
+    public int QuestionID { get; set; }
+    public bool Type { get; set; }
 }
 
 [NotMapped]
 public class QuestionSearchViewModel
 {
-    public List<Question>? Questions{ get; set; }
-    public string? QuestionSearchString{ get; set; }
+    public List<Question>? Questions { get; set; }
+    public string? QuestionSearchString { get; set; }
 }

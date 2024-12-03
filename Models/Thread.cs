@@ -14,12 +14,12 @@ public class ThreadTopic
     public int ThreadTopicID { get; set; }
 
     [HiddenInput(DisplayValue = false)]
-    public string UserID { get; set; }=null!;
+    public string UserID { get; set; } = null!;
     public string Title { get; set; } = string.Empty;
 
     [HiddenInput(DisplayValue = false)]
     public DateTime CreationDate { get; set; }
-    public DateTime LastEditTime{ get; set; }
+    public DateTime LastEditTime { get; set; }
     public string Message { get; set; } = string.Empty;
     public required List<string> Tag { get; set; }
     public int LatestReplyID { get; set; }
@@ -33,7 +33,7 @@ public class ThreadTopic
 public class ThreadPost
 {
     public required ThreadTopic ThreadTopic { get; set; }
-    public required bool DiscussFlag{ get; set; }
+    public required bool DiscussFlag { get; set; }
     //public List<ThreadTopicReply> ThreadTopicReplies { get; } = new List<ThreadTopicReply>();
 }
 
@@ -62,7 +62,7 @@ public class ThreadEditViewModel
 [NotMapped]
 public class ThreadSearchViewModel
 {
-    public List<ThreadTopic>? ThreadTopics { get; set; }
+    public PaginatedList<ThreadTopic>? ThreadTopics { get; set; }
     public SelectList? Tags { get; set; }
     public string? ThreadTag { get; set; }
     public string? ThreadSearchString { get; set; }

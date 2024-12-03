@@ -14,7 +14,7 @@ namespace GameForge.Controllers
 {
     public class ThreadTopicReplyController : Controller
     {
-       private readonly GameForgeContext _context;
+        private readonly GameForgeContext _context;
         private readonly UserManager<User> _userManager;
 
         public ThreadTopicReplyController(GameForgeContext context, UserManager<User> userManager)
@@ -83,9 +83,9 @@ namespace GameForge.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userID=await GetCurrentUserIdAsync();
+                var userID = await GetCurrentUserIdAsync();
                 var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
-        
+
                 if (user == null)
                 {
                     return NotFound();
@@ -100,7 +100,7 @@ namespace GameForge.Controllers
                 {
                     Message = threadReplyCreateViewModel.ThreadTopicReplyText,
                     CreationDate = DateTime.UtcNow,
-                    LastEditTime=DateTime.UtcNow,
+                    LastEditTime = DateTime.UtcNow,
                     User = user,
                     ThreadTopic = threadTopic,
                     ParentReply = parentReply,
@@ -109,7 +109,7 @@ namespace GameForge.Controllers
                 _context.Add(threadReply);
                 _context.Update(threadTopic);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details","ThreadTopic",new {id=threadReplyCreateViewModel.ThreadTopicID});
+                return RedirectToAction("Details", "ThreadTopic", new { id = threadReplyCreateViewModel.ThreadTopicID });
             }
             return View(threadReplyCreateViewModel);
         }

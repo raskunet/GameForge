@@ -7,7 +7,7 @@ public class ThreadTag
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ThreadTagID{ get; set; }
-    public required string TagName{ get; set; }
+    public int ThreadTagID { get; set; }
+    public required string TagName { get; set; }
     public DateTime CreationDate { get; set; }
 }
