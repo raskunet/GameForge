@@ -107,6 +107,8 @@ namespace GameForge.Controllers
             var game = await _context.Game.FindAsync(id);
             if (game == null) return NotFound();
 
+
+            
             // Check if the user already purchased the game
             var existingPurchase = _context.Purchase.FirstOrDefault(p => p.GameId == id && p.UserId == userId);
             if (existingPurchase != null)
@@ -120,7 +122,10 @@ namespace GameForge.Controllers
             {
                 UserId = userId,
                 GameId = id,
-                PurchaseDate = DateTime.Now,
+                PurchaseDate = DateTime.UtcNow,
+        
+
+
                 PricePaid = game.PriceAfterDiscount
             };
 
