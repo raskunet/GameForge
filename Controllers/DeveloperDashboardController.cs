@@ -111,19 +111,15 @@ namespace GameForge.Controllers
             var developerId = await GetCurrentDeveloperIdAsync();
             if (ModelState.IsValid)
             {
-
+                if (game.ReleaseDate.Kind == DateTimeKind.Unspecified)
+                {
+                    game.ReleaseDate = DateTime.SpecifyKind(game.ReleaseDate, DateTimeKind.Utc);
+                }
+                else if (game.ReleaseDate.Kind == DateTimeKind.Local)
+                {
+                    game.ReleaseDate = game.ReleaseDate.ToUniversalTime();
+                }
                 game.DeveloperId = developerId;
-                game.ReleaseDate = DateTime.UtcNow;
-                // var cgame=new Game({
-                //     Title=Igame.Title,
-                //     Price=Igame.Price,
-                //     Description=Igame.Description,
-                //     ReleaseDate=DateTime.UtcNow,
-                //     DiscountPercentage=Igame.DiscountPercentage,
-                //     IsPaid=Igame.IsPaid,
-                //     ImageUrl=Igame.ImageUrl
-                // });
-
                 _context.Game.Add(game);
                 await _context.SaveChangesAsync();
 
@@ -180,6 +176,14 @@ namespace GameForge.Controllers
             {
                 try
                 {
+                    if (game.ReleaseDate.Kind == DateTimeKind.Unspecified)
+                    {
+                        game.ReleaseDate = DateTime.SpecifyKind(game.ReleaseDate, DateTimeKind.Utc);
+                    }
+                    else if (game.ReleaseDate.Kind == DateTimeKind.Local)
+                    {
+                        game.ReleaseDate = game.ReleaseDate.ToUniversalTime();
+                    }
                     _context.Update(game);
                     await _context.SaveChangesAsync();
                 }
