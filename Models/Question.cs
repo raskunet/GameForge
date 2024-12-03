@@ -33,6 +33,7 @@ public class QuestionPost
 {
     public required Question Question { get; set; }
     public required bool AnswerFlag { get; set; }
+    public bool ModifyFlag { get; set; }
     //public List<Answer> Answers { get; } = new List<Answer>();
 }
 

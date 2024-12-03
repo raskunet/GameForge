@@ -66,6 +66,13 @@ namespace GameForge.Controllers
                 return Unauthorized("You can only review games you have purchased.");
             }
 
+            bool alreadyReviewed = _context.Review.Any(r => r.GameId == review.GameId && r.UserId == userId);
+            if (alreadyReviewed)
+            {
+                return BadRequest("You have already reviewed this game.");
+            }
+
+            
             if (ModelState.IsValid)
             {
                 review.CreatedAt = DateTime.UtcNow;

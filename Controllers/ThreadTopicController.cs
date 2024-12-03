@@ -25,8 +25,12 @@ namespace GameForge.Controllers
         private async Task<string> GetCurrentUserIdAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if(user==null){
+                return "";
+            }
             return user.Id;
         }
+
         // GET: ThreadTopic
         public async Task<IActionResult> Index(string ThreadTag, string ThreadSearchString, string currentFilter, string sortOrder, int? pageNumber, string currentTag)
         {
@@ -87,27 +91,35 @@ namespace GameForge.Controllers
             return View(threadSearchviewModel);
         }
 
-        private object PaginatedList(Task<List<ThreadTopic>> task)
-        {
-            throw new NotImplementedException();
-        }
-
         // GET: ThreadTopic/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var threadTopic = await _context.ThreadTopic
                 .Include(t => t.User)
                 .Include(t => t.ThreadTopidcReplies)
+                .ThenInclude(t=>t.User)
                 .FirstOrDefaultAsync(m => m.ThreadTopicID == id);
+
+            var modifyFlag = false;
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("Login at the Login Page");
+            }
+
             if (threadTopic == null)
             {
                 return NotFound();
             }
-
+            if (userID != threadTopic.UserID)
+            {
+                modifyFlag = true;
+            }
             var threadpostViewModel = new ThreadPost
             {
                 ThreadTopic = threadTopic,
-                DiscussFlag = false
+                DiscussFlag = false,
+                ModifyFlag = modifyFlag
             };
 
             return View(threadpostViewModel);
@@ -173,6 +185,15 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopic.UserID)
+            {
+                return Unauthorized();
+            }
             var threadEditViewModel = new ThreadEditViewModel
             {
                 Title = threadTopic.Title,
@@ -208,6 +229,15 @@ namespace GameForge.Controllers
                     if (threadTopic == null)
                     {
                         return NotFound();
+                    }
+                    var userID = await GetCurrentUserIdAsync();
+                    if (userID == "")
+                    {
+                        return NotFound("User doesn't exist. Go to Login");
+                    }
+                    if (userID != threadTopic.UserID)
+                    {
+                        return Unauthorized();
                     }
                     threadTopic.Message = threadEditViewModel.Message;
                     threadTopic.Title = threadEditViewModel.Title;
@@ -248,6 +278,16 @@ namespace GameForge.Controllers
                 return NotFound();
             }
 
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopic.UserID)
+            {
+                return Unauthorized();
+            }
+
             return View(threadTopic);
         }
 
@@ -257,13 +297,23 @@ namespace GameForge.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var threadTopic = await _context.ThreadTopic.FindAsync(id);
-            if (threadTopic != null)
+            if (threadTopic == null)
             {
-                _context.ThreadTopic.Remove(threadTopic);
+                return NotFound();
+                
             }
-
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopic.UserID)
+            {
+                return Unauthorized();
+            }
+            _context.ThreadTopic.Remove(threadTopic);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index","ThreadTopic");
         }
 
         private bool ThreadTopicExists(int id)

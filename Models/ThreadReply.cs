@@ -16,7 +16,7 @@ public class ThreadTopicReply
     public int? ParentReplyID { get; set; }
     public int ThreadTopicID { get; set; }
     public string Message { get; set; } = string.Empty;
-    public int UserID { get; set; }
+    public string UserID { get; set; } = null!;
     public DateTime CreationDate { get; set; }
     public DateTime LastEditTime { get; set; }
     public required ThreadTopic ThreadTopic { get; set; }

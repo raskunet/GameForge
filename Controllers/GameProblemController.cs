@@ -9,9 +9,11 @@ using GameForge.Data;
 using GameForge.Models;
 using NuGet.Versioning;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameForge.Controllers
 {
+    [Authorize(Roles="User")]
     public class GameProblemController : Controller
     {
         private readonly GameForgeContext _context;
@@ -25,6 +27,10 @@ namespace GameForge.Controllers
         private async Task<string> GetCurrentUserIdAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return "";
+            }
             return user.Id;
         }
 
@@ -39,6 +45,7 @@ namespace GameForge.Controllers
         // GET: GameProblem/Details/5
         public async Task<IActionResult> Details(int GameProblemID)
         {
+            var userID = await GetCurrentUserIdAsync();
             var gameProblem = await _context.GameProblems
                 .Include(g => g.Game)
                 .Include(g => g.User)
@@ -46,6 +53,10 @@ namespace GameForge.Controllers
             if (gameProblem == null)
             {
                 return Problem("Not found");
+            }
+            if (gameProblem.Game.DeveloperId != userID)
+            {
+                return Unauthorized();
             }
 
             return View(gameProblem);

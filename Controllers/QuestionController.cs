@@ -74,11 +74,17 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("NO User Found");
+            }
             var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
             var answerFlag = false;
+            var modifyFlag = false;
             var question = await _context.Question
                 .Include(q => q.User)
                 .Include(q => q.Answers)
+                .ThenInclude(a=>a.User)
                 .FirstOrDefaultAsync(m => m.QuestionID == id);
             if (question == null)
             {
@@ -89,7 +95,11 @@ namespace GameForge.Controllers
             {
                 answerFlag = true;
             }
-            var questionPost = new QuestionPost { Question = question, AnswerFlag = answerFlag };
+            if (question.AuthorID == userID)
+            {
+                modifyFlag = true;
+            }
+            var questionPost = new QuestionPost { Question = question, AnswerFlag = answerFlag, ModifyFlag = modifyFlag };
 
             return View(questionPost);
         }
@@ -124,7 +134,6 @@ namespace GameForge.Controllers
             if (ModelState.IsValid)
             {
                 var userId = await GetCurrentUserIdAsync();
-                //TODO : Get Current User From saved Cookie and Use that instead of this 
                 var tempUser = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
                 if (tempUser == null)
                 {
@@ -165,6 +174,14 @@ namespace GameForge.Controllers
                 Title = question.Title
             };
             var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (question.AuthorID != userID)
+            {
+                return Unauthorized();
+            }
             var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
 
             var LatestEditQuestion = await _context.Question.FirstOrDefaultAsync(m => m.AuthorID == userID && m.QuestionID == id);
@@ -193,9 +210,20 @@ namespace GameForge.Controllers
                     var userID = await GetCurrentUserIdAsync();
                     var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userID);
                     var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == questionEditViewModel.QuestionID && m.User.Id == userID);
+                    
                     if (question == null)
                     {
                         return NotFound();
+                    }
+
+                    if (userID == "")
+                    {
+                        return NotFound();
+                    }
+                    
+                    if (question.AuthorID != userID)
+                    {
+                        return Unauthorized();
                     }
                     question.Title = questionEditViewModel.Title;
                     question.QuestionText = questionEditViewModel.QuestionText;
@@ -234,6 +262,15 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (question.AuthorID != userID)
+            {
+                return Unauthorized();
+            }
 
             return View(question);
         }
@@ -244,10 +281,20 @@ namespace GameForge.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var question = await _context.Question.FindAsync(id);
-            if (question != null)
+            if (question == null)
             {
-                _context.Question.Remove(question);
+                return NotFound();
             }
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (userID != question.AuthorID)
+            {
+                return Unauthorized();
+            }
+            _context.Question.Remove(question);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

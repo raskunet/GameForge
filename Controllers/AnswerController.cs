@@ -24,34 +24,17 @@ namespace GameForge.Controllers
         private async Task<string> GetCurrentUserIdAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return "";
+            }
             return user.Id;
         }
 
         // GET: Answer
-        public async Task<IActionResult> Index()
+        public void Index()
         {
-            var gameForgeContext = _context.Answer.Include(a => a.Question).Include(a => a.User);
-            return View(await gameForgeContext.ToListAsync());
-        }
-
-        // GET: Answer/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var answer = await _context.Answer
-                .Include(a => a.Question)
-                .Include(a => a.User)
-                .FirstOrDefaultAsync(m => m.QuestionID == id);
-            if (answer == null)
-            {
-                return NotFound();
-            }
-
-            return View(answer);
+            RedirectToAction("Index", "Question");
         }
 
         // GET: Answer/Create/QuestionID
@@ -59,6 +42,10 @@ namespace GameForge.Controllers
         public async Task<IActionResult> Create(int QuestionID)
         {
             var userId = await GetCurrentUserIdAsync();
+            if (userId == "")
+            {
+                return NotFound("User not found");
+            }
             var AnswerCreate = new AnswerCreateViewModel { QuestionID = QuestionID, CanCreate = false };
             var latestAnswer = await _context.Answer.FirstOrDefaultAsync(m => m.QuestionID == QuestionID && m.UserID == userId);
             if (latestAnswer != null)
@@ -78,6 +65,9 @@ namespace GameForge.Controllers
             if (ModelState.IsValid)
             {
                 var userId = await GetCurrentUserIdAsync();
+                if(userId==""){
+                    return NotFound();
+                }
                 var user = await _context.User.FirstOrDefaultAsync(m => m.Id == userId);
                 var question = await _context.Question.FirstOrDefaultAsync(m => m.QuestionID == answerDat.QuestionID);
 
@@ -85,7 +75,6 @@ namespace GameForge.Controllers
                 {
                     return NotFound();
                 }
-
                 var answer = new Answer
                 {
                     Question = question,
@@ -113,9 +102,18 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (userID != answer.UserID)
+            {
+                return Unauthorized();
+            }
             var answerEditViewModel = new AnswerEditViewModel { QuestionID = QuestionID, UserID = UserID, AnswerText = answer.AnswerText };
             var timeSpan = DateTime.UtcNow - answer.LastEditTime;
-            if (timeSpan.TotalMinutes > 1)
+            if (timeSpan.TotalMinutes < 1)
             {
                 answerEditViewModel.CanEdit = false;
             }
@@ -137,6 +135,16 @@ namespace GameForge.Controllers
                     if (answer == null)
                     {
                         return NotFound();
+                    }
+
+                    var userID = await GetCurrentUserIdAsync();
+                    if (userID == "")
+                    {
+                        return NotFound();
+                    }
+                    if (userID != answer.UserID)
+                    {
+                        return Unauthorized();
                     }
 
                     answer.AnswerText = answerEditViewModel.AnswerText;
@@ -176,6 +184,16 @@ namespace GameForge.Controllers
                 return NotFound();
             }
 
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (userID != answer.UserID)
+            {
+                return Unauthorized();
+            }
+
             return View(answer);
         }
 
@@ -185,10 +203,21 @@ namespace GameForge.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var answer = await _context.Answer.FindAsync(id);
-            if (answer != null)
+            if (answer == null)
             {
-                _context.Answer.Remove(answer);
+                return NotFound();
             }
+
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound();
+            }
+            if (userID != answer.UserID)
+            {
+                return Unauthorized();
+            }
+            _context.Answer.Remove(answer);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

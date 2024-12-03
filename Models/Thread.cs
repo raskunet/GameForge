@@ -34,6 +34,7 @@ public class ThreadPost
 {
     public required ThreadTopic ThreadTopic { get; set; }
     public required bool DiscussFlag { get; set; }
+    public bool ModifyFlag { get; set; }
     //public List<ThreadTopicReply> ThreadTopicReplies { get; } = new List<ThreadTopicReply>();
 }
 
