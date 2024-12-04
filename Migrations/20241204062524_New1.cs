@@ -564,19 +564,19 @@ namespace GameForge.Migrations
                     ParentReplyID = table.Column<int>(type: "integer", nullable: true),
                     ThreadTopicID = table.Column<int>(type: "integer", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
-                    UserID = table.Column<int>(type: "integer", nullable: false),
+                    UserID = table.Column<string>(type: "text", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastEditTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: true)
+                    LastEditTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ThreadTopicReplies", x => x.ThreadTopicReplyID);
                     table.ForeignKey(
-                        name: "FK_ThreadTopicReplies_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_ThreadTopicReplies_AspNetUsers_UserID",
+                        column: x => x.UserID,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ThreadTopicReplies_ThreadTopicReplies_ParentReplyID",
                         column: x => x.ParentReplyID,
@@ -728,9 +728,9 @@ namespace GameForge.Migrations
                 column: "ThreadTopicID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ThreadTopicReplies_UserId",
+                name: "IX_ThreadTopicReplies_UserID",
                 table: "ThreadTopicReplies",
-                column: "UserId");
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wishlist_GameId",

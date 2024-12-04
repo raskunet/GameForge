@@ -24,7 +24,7 @@
             {
                 <tr>
                     <td>@item.game.Title</td>
-                    <td>@item.game.Price.ToString("C")</td>
+                    <td>@item.game.PriceAfterDiscount.ToString("C")</td>
                     <td>
                         <form method="post" action="@Url.Action("RemoveGame", "Cart")">
                             <input type="hidden" name="cartId" value="@item.CartID" />

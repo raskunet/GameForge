@@ -44,7 +44,7 @@ public class CartController : Controller
         .ToList();
 
         // var totalPrice = cartItems.Sum(item => item.game.Price);
-        var totalPrice = cartItems.Sum(item => item.game != null ? item.game.Price : 0);
+        var totalPrice = cartItems.Sum(item => item.game != null ? item.game.PriceAfterDiscount : 0);
 
         // Get TotalCollectables from the Collectables table for this user
         var collectables = _context.Wallets

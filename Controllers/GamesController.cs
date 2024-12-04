@@ -96,7 +96,7 @@ namespace GameForge.Controllers
 
             return View(game);
         }
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> AddToCart(int id)
         {
@@ -172,7 +172,8 @@ namespace GameForge.Controllers
 
            
         }
-         [HttpPost]
+        [Authorize(Roles = "User")]
+        [HttpPost]
         public async Task<IActionResult> AddToWishlist(int id)
         {
             var userId = await GetCurrentUserIdAsync();

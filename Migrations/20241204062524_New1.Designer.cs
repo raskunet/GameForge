@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameForge.Migrations
 {
     [DbContext(typeof(GameForgeContext))]
-    [Migration("20241203200512_New1")]
+    [Migration("20241204062524_New1")]
     partial class New1
     {
         /// <inheritdoc />
@@ -482,10 +482,8 @@ namespace GameForge.Migrations
                     b.Property<int>("ThreadTopicID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ThreadTopicReplyID");
@@ -494,7 +492,7 @@ namespace GameForge.Migrations
 
                     b.HasIndex("ThreadTopicID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserID");
 
                     b.ToTable("ThreadTopicReplies");
                 });
@@ -967,7 +965,9 @@ namespace GameForge.Migrations
 
                     b.HasOne("GameForge.Models.User", "User")
                         .WithMany("ThreadTopicReplies")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ParentReply");
 
