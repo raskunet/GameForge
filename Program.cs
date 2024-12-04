@@ -21,7 +21,7 @@ namespace GameForge
                 return;
             }
 
-
+            Console.WriteLine(Environment.GetEnvironmentVariable("POSTGRES"));
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<GameForgeContext>(options =>
                 options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES")));

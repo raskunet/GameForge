@@ -4,7 +4,11 @@
     ViewData["Title"] = "Games";
 }
 
-<h1>Games</h1>
+<h1>Games
+    <div class="collectables-info">
+        <p><strong>Wallet :</strong> @Model.Total</p>
+    </div>
+</h1>
 
 <!-- Search and Filter Form -->
 <form asp-controller="Games" asp-action="Index" method="get">
@@ -42,6 +46,14 @@
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                         @Html.ActionLink("Report Issue","Create","GameProblem",new {GameID=item.Id},new {@class="btn btn-secondary"})
+                        <form asp-action="AddToCart" method="post">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
+                        <form asp-action="AddToWishlist" method="post">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-primary">Add to Wishlist</button>
+                        </form>
                     </td>
                 </tr>
             }

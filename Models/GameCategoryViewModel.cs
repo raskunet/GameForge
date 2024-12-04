@@ -16,5 +16,7 @@ namespace GameForge.Models
 
         // Search string for game title
         public string? SearchString { get; set; }
+        public decimal Total {get;set;}=0;
+
     }
 }

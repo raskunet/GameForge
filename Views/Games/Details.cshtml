@@ -22,7 +22,7 @@
         <p>@Model.Description</p>
     </div>
 
-    @if (User.Identity.IsAuthenticated)
+    @* @if (User.Identity.IsAuthenticated)
     {
         bool? hasPurchased = ViewData["PurchaseCond"] as bool?;
         if (!hasPurchased.HasValue || !hasPurchased.Value)
@@ -41,7 +41,7 @@
     else
     {
         <p class="text-danger"><strong>You need to log in to purchase this game.</strong></p>
-    }
+    } *@
 
     @if (!string.IsNullOrEmpty(Model.GameplayLink))
     {

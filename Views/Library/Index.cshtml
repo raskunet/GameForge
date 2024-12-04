@@ -1,0 +1,24 @@
+@model GameForge.Models.LibraryViewModel
+
+<h2>Downloaded Games
+    <div class="collectables-info">
+        <p><strong>Total Collectables :</strong> @Model.TotalCollectables</p>
+    </div>
+</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Game Name</th>
+            <th>Download Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var library in Model.Items)
+        {
+            <tr>
+                <td>@library.game?.Title</td>
+                <td>@library.LibraryCreationDate.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -65,6 +65,11 @@
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
 
+                        <form asp-action="AddToFeatured" method="post">
+                        <input type="hidden" name="id" value="@game.Id" />
+                        <button type="submit" class="btn btn-primary">Featured</button>
+                        </form>
+                
                          @Html.ActionLink("View Reported Issues","Index","GameProblem",new {GameID=@game.Id},new {@class="btn btn-secondary btn-sm"})
                     </div>
                 </td>    

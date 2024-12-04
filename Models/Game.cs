@@ -50,7 +50,7 @@ namespace GameForge.Models
         }
 
         [Required]  // Ensures that every game is linked to a developer
-        public string DeveloperId { get; set; }
+        public string? DeveloperId { get; set; }
 
         // Navigation property to Developer
         public Developer? Developer { get; set; }
@@ -64,7 +64,7 @@ namespace GameForge.Models
         public decimal PriceAfterDiscount => IsPaid ? Price * (1 - DiscountPercentage / 100) : 0;
 
         // Define a discount percentage (e.g., 0 if no discount)
-
+         public ICollection<Library>? Libraries { get; set; }
 
 
     }

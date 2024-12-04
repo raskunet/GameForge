@@ -1,0 +1,27 @@
+@model IEnumerable<GameForge.Models.Featured>
+
+<h2>Featured Games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Game Name</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var games in Model)
+        {
+            <tr>
+                <td>@games.game.Title</td>
+                <td>@games.game.Category</td>
+                <td>
+                        <form method="post" action="@Url.Action("RemoveFeatured", "Featured")">
+                            <input type="hidden" name="FeaturedId" value="@games.Id" />
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
