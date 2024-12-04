@@ -17,10 +17,10 @@
                 <polygon points="12,0 24,24 0,24"/>
             </svg>
         </button>
-        <div class="fw-bold id="questionVoteCount">@(Model.Question.Upvotes-Model.Question.Downvotes)</div>
+
+        <div class="fw-bold" id="questionVoteCount" >@(Model.Question.Upvotes - Model.Question.Downvotes)</div>
         <button class="btn p-0" title="Downvote" onclick="QuestionVote(@Model.Question.QuestionID,false)">
             <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-danger" style="transform: rotate(180deg);">
-    using System.Text.Encodings.Web;
                 <polygon points="12,0 24,24 0,24"/>
             </svg>
         </button>
@@ -32,10 +32,13 @@
             @Html.Raw(Markdown.ToHtml(Model.Question.QuestionText))
         </p>
     </div>
-    <div class="ms-3">
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Question.QuestionID }, new { @class = "btn btn-secondary" })
-         @Html.ActionLink("Delete", "Delete", new { id = Model.Question.QuestionID }, new { @class = "btn btn-warning" })
-    </div>
+    @if (Model.ModifyFlag) {
+        <div class="ms-3">
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Question.QuestionID }, new { @class = "btn btn-secondary" })
+            @Html.ActionLink("Delete", "Delete", new { id = Model.Question.QuestionID }, new { @class = "btn btn-warning" })
+        </div>
+    }
+
 
 </div>
 
@@ -57,15 +60,15 @@
                 <div class="list-group-item mb-2 p-3 d-flex">
                     <!-- Upvote/Downvote Buttons on the Left -->
                     <div class="text-center me-3">
-                        <button class="btn p-0" title="Upvote" onclick="AnswerVote(@Model.Question.QuestionID,@answer.UserID,true)">
+                        <button class="btn p-0" title="Upvote" onclick="AnswerVote(@Model.Question.QuestionID,`@answer.UserID`,true)">
                             <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-success">
                                 <polygon points="12,0 24,24 0,24"/>
                             </svg>
                         </button>
-                        <div class="fw-bold" id=`answerVoteCount_${@answer.QuestionID}_${@answer.UserID}`>
+                        <div class="fw-bold" id=@String.Concat("answerVoteCount_",answer.QuestionID,"_",answer.UserID)>
                             @(answer.Upvotes - answer.Downvotes)
                         </div>
-                        <button class="btn p-0" title="Downvote" onclick="AnswerVote(@Model.Question.QuestionID,@answer.UserID,false)">
+                        <button class="btn p-0" title="Downvote" onclick="AnswerVote(@Model.Question.QuestionID,`@answer.UserID`,false)">
                             <svg width="24" height="24" fill="currentColor" class="bi bi-triangle-fill text-danger" style="transform: rotate(180deg);">
                                 <polygon points="12,0 24,24 0,24"/>
                             </svg>
@@ -76,7 +79,7 @@
                     <div class="flex-grow-1">
                         <p>@Html.DisplayFor(_ => answer.AnswerText)</p>
                         <div class="d-flex justify-content-between mt-3">
-                            <small class="text-muted">Answered by @answer.User.UserName on @answer.CreationDate.ToString("MMM dd, yyyy")</small>
+                            <small class="text-muted">Answered by @answer.User.Email on @answer.CreationDate.ToString("MMM dd, yyyy")</small>
                         </div>
                     </div>
 
@@ -122,7 +125,7 @@
 }
 
 @section Scripts{
-    <script>
+    <script >
         function QuestionVote(QuestionID, type) {
             const url = "/Question/QuestionVote"
 
@@ -137,8 +140,10 @@
                    data: JSON.stringify(requestObj),
                    success: function(data) {
                        if (data.success) {
-                           const voteCountElement = ` #questionVoteCount` ;
-                           $(voteCountElement).html(`${data.upvotes} - ${data.downvotes}`);
+                            console.log("Data",data);
+                           const voteCountElement = `#questionVoteCount`;
+                           const totalVotes=Number(data.upvotes)-Number(data.downvotes);
+                           $(voteCountElement).html(totalVotes);
                        } else {
                            alert(data.message); // Display message if user already voted
                        }
@@ -165,8 +170,9 @@
                 data:JSON.stringify(requestObj),
                 success:function(data){
                     if(data.success){
-                        const voteCountElement=` #answerVoteCount_${QuestionID}_${UserID}`;
-                        $(voteCountElement).html(`${data.upvotes}-${data.downvotes}`);
+                        const voteCountElement=`#answerVoteCount_${QuestionID}_${UserID}`;
+                        const totalVotes=Number(data.upvotes)-Number(data.downvotes);
+                        $(voteCountElement).html(totalVotes);
                     }else{
                         alert(data.message);
                     }

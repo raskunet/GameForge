@@ -8,13 +8,12 @@
 
 <h4>ThreadTopicReply</h4>
 <hr />
-@if (!Model.CanEdit)
+@if (Model.CanEdit)
 {
     <div class="row">
         <div class="col-md-4">
-            <form asp-action="Edit">
+            <form asp-action="Edit" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="ThreadTopicID" />
                 <div class="form-group">
                     <label asp-for="ThreadTopicReplyText" class="control-label"></label>
                     <input asp-for="ThreadTopicReplyText" class="form-control" />
@@ -36,7 +35,7 @@
     </div>
 }
 <div>
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Back to Discussion","Details","ThreadTopic",new {id=Model.ThreadTopicID})
 </div>
 
 @section Scripts {

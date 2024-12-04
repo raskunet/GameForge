@@ -248,3 +248,6 @@ MigrationBackup/
 .env
 
 .sonarqube/
+node_modules/
+script.bat
+StartSonar.bat

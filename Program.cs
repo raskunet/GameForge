@@ -66,7 +66,7 @@ namespace GameForge
             {
                 var services = scope.ServiceProvider;
                 SeedDataTag.Initialize(services);
-                //SeedData.Initialize(services);
+                SeedData.Initialize(services);
             }
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())

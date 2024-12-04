@@ -25,33 +25,17 @@ namespace GameForge.Controllers
         private async Task<string> GetCurrentUserIdAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return "";
+            }
             return user.Id;
         }
 
         // GET: ThreadTopicReply
-        public async Task<IActionResult> Index()
+        public void Index()
         {
-            var gameForgeContext = _context.ThreadTopicReplies.Include(t => t.ThreadTopic);
-            return View(await gameForgeContext.ToListAsync());
-        }
-
-        // GET: ThreadTopicReply/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var threadTopicReply = await _context.ThreadTopicReplies
-                .Include(t => t.ThreadTopic)
-                .FirstOrDefaultAsync(m => m.ThreadTopicID == id);
-            if (threadTopicReply == null)
-            {
-                return NotFound();
-            }
-
-            return View(threadTopicReply);
+            RedirectToAction("Index", "ThreadTopic");
         }
 
         // GET: ThreadTopicReply/Create
@@ -62,7 +46,12 @@ namespace GameForge.Controllers
                 ThreadTopicID = ThreadTopicID,
                 ParentReplyID = ParentReplyID
             };
-            var latestThreadReply = await _context.ThreadTopicReplies.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == 1 && m.ThreadTopicID == ThreadTopicID);
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("Login at the Login Page");
+            }
+            var latestThreadReply = await _context.ThreadTopicReplies.OrderByDescending(m => m.CreationDate).FirstOrDefaultAsync(m => m.UserID == userID && m.ThreadTopicID == ThreadTopicID);
             if (latestThreadReply != null)
             {
                 var timeSpan = DateTime.UtcNow - latestThreadReply.CreationDate;
@@ -122,14 +111,24 @@ namespace GameForge.Controllers
             {
                 return NotFound();
             }
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopicReply.UserID)
+            {
+                return Unauthorized();
+            }
             var threadReplyEditModel = new ThreadReplyEditViewModel
             {
-                ThreadTopicID = threadTopicReply.ThreadTopicReplyID,
+                ThreadTopicID = threadTopicReply.ThreadTopicID,
                 ThreadTopicReplyText = threadTopicReply.Message,
+                ThreadTopicReplyID = ThreadTopicReplyID
                 //ParentReplyID = threadTopicReply.ParentReplyID
             };
             var timeSpan = DateTime.UtcNow - threadTopicReply.LastEditTime;
-            if (timeSpan.TotalMinutes > 1)
+            if (timeSpan.TotalMinutes < 1)
             {
                 threadReplyEditModel.CanEdit = false;
             }
@@ -147,10 +146,19 @@ namespace GameForge.Controllers
             {
                 try
                 {
-                    var threadreply = await _context.ThreadTopicReplies.FindAsync(threadTopicEditReply.ThreadTopicID);
+                    var threadreply = await _context.ThreadTopicReplies.FindAsync(threadTopicEditReply.ThreadTopicReplyID);
                     if (threadreply == null)
                     {
                         return NotFound();
+                    }
+                    var userID = await GetCurrentUserIdAsync();
+                    if (userID == "")
+                    {
+                        return NotFound("User doesn't exist. Go to Login");
+                    }
+                    if (userID != threadreply.UserID)
+                    {
+                        return Unauthorized();
                     }
                     threadreply.Message = threadTopicEditReply.ThreadTopicReplyText;
                     threadreply.LastEditTime = DateTime.UtcNow;
@@ -189,6 +197,16 @@ namespace GameForge.Controllers
                 return NotFound();
             }
 
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopicReply.UserID)
+            {
+                return Unauthorized();
+            }
+
             return View(threadTopicReply);
         }
 
@@ -198,11 +216,21 @@ namespace GameForge.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var threadTopicReply = await _context.ThreadTopicReplies.FindAsync(id);
-            if (threadTopicReply != null)
+            if (threadTopicReply == null)
             {
-                _context.ThreadTopicReplies.Remove(threadTopicReply);
+                return NotFound();
             }
 
+            var userID = await GetCurrentUserIdAsync();
+            if (userID == "")
+            {
+                return NotFound("User doesn't exist. Go to Login");
+            }
+            if (userID != threadTopicReply.UserID)
+            {
+                return Unauthorized();
+            }
+            _context.ThreadTopicReplies.Remove(threadTopicReply);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

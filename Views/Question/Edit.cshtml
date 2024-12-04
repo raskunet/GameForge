@@ -7,7 +7,7 @@
 <h1 class="text-center text-primary mb-4">@ViewData["Title"]</h1>
 
 <div class="container">
-    @if (!Model.CanEdit)
+    @if (Model.CanEdit)
     {
         <div class="card shadow-lg border-0">
             <div class="card-header bg-primary text-white">

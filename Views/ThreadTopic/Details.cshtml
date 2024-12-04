@@ -62,6 +62,9 @@
                             <small class="text-muted">Replied on <br>
                                 <em>@reply.CreationDate.ToString("MMM dd, yyyy hh:mm tt")</em>
                             </small>
+                            <small>
+                                by @reply.User.UserName
+                            </small>
                         </div>
 
                         <!-- Reply Content -->
@@ -87,7 +90,7 @@
                             {
                                 ThreadTopicReplyID = reply.ThreadTopicReplyID
                                 }, new { @class = "btn btn-warning btn-sm" })
-                            @Html.ActionLink("Reply", "Create", "ThreadTopicReply", new
+                                @Html.ActionLink("Reply", "Create", "ThreadTopicReply", new
                                 {
                                     ThreadTopicID = Model.ThreadTopic.ThreadTopicID,
                                     ParentReplyID = reply.ThreadTopicReplyID
